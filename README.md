@@ -1,0 +1,6 @@
+## Running the App
+
+```java
+javac -cp lib/json-simple-1.1.1.jar *.java
+java -cp .:lib/json-simple-1.1.1.jar Main
+```
