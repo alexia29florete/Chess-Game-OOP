@@ -75,7 +75,7 @@ public class Board
     public Piece movePiece(Position from, Position to, char promotionChoice) throws InvalidMoveException, InvalidCommandException {
         if(!this.isValidMove(from, to))
         {
-            throw new InvalidMoveException("Mutare nevalida!");
+            throw new InvalidMoveException("Invalid move!");
         }
         Piece piesaCurenta = this.getPieceAt(from);
         Piece potentialObstaclePiece = this.getPieceAt(to);
@@ -173,18 +173,24 @@ public class Board
     {
         if(from.getX() < 'A' || from.getX() > 'H' || from.getY() < 1 || from.getY() > 8 || to.getX() < 'A' || to.getX() > 'H' || to.getY() < 1 || to.getY() > 8)
         {
-            throw new InvalidMoveException("Pozitiile sunt in afara tablei de sah");
+            throw new InvalidMoveException("Position is outside the chess table");
         }
         Piece piesaCurenta = getPieceAt(from);
         if(piesaCurenta == null)
         {
-            throw new InvalidMoveException("Nu exista piesa la pozitia de start");
+            throw new InvalidMoveException("No piece at starting position");
         }
 
         List<Position> mutariPosibile = piesaCurenta.getPossibleMoves(this);
         if(!mutariPosibile.contains(to))
         {
-            throw new InvalidMoveException("Mutarea nu este posibila pentru tipul de piesa");
+            throw new InvalidMoveException("No possible move for this piece");
+        }
+
+        Piece atTo = getPieceAt(to);
+        if (atTo != null && atTo.getColor() == piesaCurenta.getColor())
+        {
+            throw new InvalidMoveException("You can't capture your own piece!");
         }
 
         //simulez mutarea pentru a verifica daca o sa fiu in sah sau nu

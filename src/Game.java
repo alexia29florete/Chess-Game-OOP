@@ -207,7 +207,7 @@ public class Game
         }
 
 //        System.out.println("Is " + getPlayer().getName() + "'s turn");
-//        board.printBoard();
+          board.printBoard(user.getColor());
         if(board.esteKingInCheck(getPlayer().getColor()))
         {
             System.out.println(getPlayer().getName() + " is in check");
@@ -225,6 +225,10 @@ public class Game
 
     public boolean checkForCheckMate()
     {
+        for (Player p : players)
+        {
+            p.updateOwnPieces(board);
+        }
         //daca regele jucatorului nu este in sah => return false
         if(!board.esteKingInCheck(players.get(idPlayerCurent).getColor()))
         {
@@ -250,7 +254,7 @@ public class Game
                 }
                 catch (InvalidMoveException e)
                 {
-                    continue;
+
                 }
             }
         }
@@ -269,16 +273,6 @@ public class Game
     {
         winner.addFinalPoints(points);
         loser.addFinalPoints(-points);
-
-        if (winner == user)
-        {
-            user.setPoints(user.getPoints() + winner.getPoints());
-        }
-        else if (loser == user)
-        {
-            user.setPoints(user.getPoints() + loser.getPoints());
-        }
-
 
         System.out.println("\n=============================================");
         System.out.println("Game ended: " + victoryCondition);

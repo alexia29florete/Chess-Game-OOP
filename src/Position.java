@@ -24,7 +24,7 @@ public class Position implements Comparable<Position>
         {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof Position))
         {
             return false;
         }
@@ -34,9 +34,10 @@ public class Position implements Comparable<Position>
 
     public int compareTo(Position p)
     {
-        if(p.y != this.y)
+        int c = Integer.compare(this.y, p.y);
+        if(c != 0)
         {
-            return Integer.compare(this.y, p.y);
+            return c;
         }
         return Character.compare(this.x, p.x);
     }
@@ -46,6 +47,13 @@ public class Position implements Comparable<Position>
         this.x = Character.toUpperCase(position.charAt(0));
         this.y = Character.getNumericValue(position.charAt(1));
     }
+
+    @Override
+    public int hashCode()
+    {
+        return 31 * x + y;
+    }
+
 
     public String toString()
     {

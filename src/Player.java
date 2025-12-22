@@ -146,16 +146,9 @@ public class Player
     public Move getComputerMove(Board board)
     {
         updateOwnPieces(board);
-
-        List<Move> checkMoves = new ArrayList<>();
-        List<Move> allValidMoves = new ArrayList<>();
-        List<Move> captureSafeMoves = new ArrayList<>();
-
-        Colors opponentColor = Colors.WHITE;
-        if(culoarePiese == Colors.WHITE)
-        {
-            opponentColor = Colors.BLACK;
-        }
+        Random rnd = new Random();
+        List<Move> allMoves = new ArrayList<>();
+        List<Move> captureMoves = new ArrayList<>();
 
         for (ChessPair<Position, Piece> pair : pieseDisponibileOwned)
         {
@@ -167,46 +160,16 @@ public class Player
                 try
                 {
                     // verific daca de la from la to e mutare invalida
-                    if (!board.isValidMove(from, to))
+                    if (board.isValidMove(from, to))
                     {
-                        continue;
-                    }
-                    //fac o simulare
-                    Piece captured = board.getPieceAt(to);
+                        Piece captured = board.getPieceAt(to);
+                        Move m = new Move(culoarePiese, from, to, captured);
 
-                    //elimin piesa de la from
-                    board.piecePosition.remove(new ChessPair<>(from, piece));
-                    if (captured != null)
-                    {
-                        board.piecePosition.remove(new ChessPair<>(to, captured));
-                    }
-
-                    piece.setPosition(to);
-                    board.piecePosition.add(new ChessPair<>(to, piece));
-
-                    //verific daca adversarul e in sah
-                    if (board.esteKingInCheck(opponentColor))
-                    {
-                        checkMoves.add(new Move(culoarePiese, from, to, captured));
-                    }
-                    else if(captured != null && board.isSquareAttacked(to, opponentColor))
-                    {
-                        captureSafeMoves.add(new Move(culoarePiese, from, to, captured));
-                    }
-                    else
-                    {
-                        allValidMoves.add(new Move(culoarePiese, from, to, captured));
-                    }
-
-                    //refac tabla la starea initiala
-                    board.piecePosition.remove(new ChessPair<>(to, piece));
-                    piece.setPosition(from);
-                    board.piecePosition.add(new ChessPair<>(from, piece));
-
-                    if (captured != null)
-                    {
-                        captured.setPosition(to);
-                        board.piecePosition.add(new ChessPair<>(to, captured));
+                        allMoves.add(m);
+                        if (captured != null)
+                        {
+                            captureMoves.add(m);
+                        }
                     }
 
                 }
@@ -216,28 +179,16 @@ public class Player
                 }
             }
         }
-
-        //prioritizez mutarile care dau sah
-        if (!checkMoves.isEmpty())
+        if (!captureMoves.isEmpty())
         {
-            Collections.shuffle(checkMoves);
-            return checkMoves.get(0);
+            return captureMoves.get(rnd.nextInt(captureMoves.size()));
+        }
+        if (allMoves.isEmpty())
+        {
+            return null;
         }
 
-        //captura
-        if (!captureSafeMoves.isEmpty())
-        {
-            Collections.shuffle(captureSafeMoves);
-            return captureSafeMoves.get(0);
-        }
-
-        //mutari random valide
-        if (!allValidMoves.isEmpty())
-        {
-            Collections.shuffle(allValidMoves);
-            return allValidMoves.get(0);
-        }
-        return null;
+        return allMoves.get(rnd.nextInt(allMoves.size()));
     }
 
     public List<Piece> getCapturedPieces()

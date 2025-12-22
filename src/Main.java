@@ -92,17 +92,13 @@ public class Main {
                 {
                     acc.setPoints(currentUser.getPoints());
 
-                    List<Integer> gamesId = acc.getGames();
-
-                    for (Game allGames : currentUser.getActiveGames())
+                    List<Integer> gamesId = new ArrayList<>();
+                    for (Game g : currentUser.getActiveGames())
                     {
-                        int id = (int) allGames.getId();
-                        if (!gamesId.contains(id))
-                        {
-                            gamesId.add(id);
-                        }
+                        gamesId.add((int) g.getId());
                     }
                     acc.setGames(gamesId);
+
                 }
             }
         }
@@ -295,7 +291,8 @@ public class Main {
         Game game = new Game(newId, userPlayer, computer);
 
         // initialize board
-        game.getBoard().initialize();
+        game.start();
+        //game.getBoard().initialize();
         games.put(newId, game);
         currentUser.addGame(game);
 
@@ -401,9 +398,14 @@ public class Main {
                     {
                         for (Move m : selectedGame.getMoves())
                         {
-                            System.out.println(
-                                    m.getPlayerColor() + ": " + m.getFrom() + " -> " + m.getTo()
-                            );
+                            if(m.getCapturedPiece() == null)
+                            {
+                                System.out.println(m.getPlayerColor() + ": " + m.getFrom() + " -> " + m.getTo());
+                            }
+                            else
+                            {
+                                System.out.println(m.getPlayerColor() + ": " + m.getFrom() + " -> " + m.getTo() + " captured " + m.getCapturedPiece().type() + "-" + m.getCapturedPiece().getColor());
+                            }
                         }
                     }
                     //ma intorc in main menu
@@ -433,16 +435,34 @@ public class Main {
         }
     }
 
+    private boolean isJustAPositionInput(String s)
+    {
+        if(s == null)
+        {
+            return false;
+        }
+        s = s.trim().toUpperCase();
+        if(s.length() != 2)
+        {
+            return false;
+        }
+        return s.charAt(0) >= 'A' && s.charAt(0) <= 'H' && s.charAt(1) >= '1' && s.charAt(1) <= '8';
+    }
+
     // game loop
     private void playGame(Game game)
     {
         // print board only once at the start
-        game.getBoard().printBoard(game.getUser().getColor());
+        //game.getBoard().printBoard(game.getUser().getColor());
 
         while (true)
         {
             Player current = game.getPlayer();
             Player opponent = game.getOpponent();
+            for (Player p : game.getPlayers())
+            {
+                p.updateOwnPieces(game.getBoard());
+            }
 
             if (game.checkForCheckMate())
             {
@@ -450,6 +470,9 @@ public class Main {
                 System.out.println("Checkmate! " + opponent.getName() + " wins");
                 game.endByCheckmate(opponent);
                 syncUserPointsFromGame(game);
+                // scoate jocul terminat din lista de active + din games map
+                currentUser.removeGame(game);
+                games.remove(game.getId());
                 break;
             }
 
@@ -464,14 +487,58 @@ public class Main {
             if (current == game.getUser())
             {
                 //mutare user
-                System.out.println("Enter your move (e.g: E2-E4) or 'resign':");
+                System.out.println("Enter your move (e.g: E2-E4) or a position (e.g: B2) to show possible moves");
+                System.out.println("You can 'resign' or 'leave'.");
                 String input = scanner.nextLine().trim();
+
+                if (input.equals("leave"))
+                {
+                    System.out.println("Game saved. Returning to main menu...");
+                    return;
+                }
 
                 if (input.equals("resign"))
                 {
                     game.resign(current);
                     syncUserPointsFromGame(game);
+                    // scoate jocul terminat din lista de active + din games map
+                    currentUser.removeGame(game);
+                    games.remove(game.getId());
                     break;
+                }
+
+                if(isJustAPositionInput(input))
+                {
+                    Position pos = new Position(input.toUpperCase());
+                    Piece piece = game.getBoard().getPieceAt(pos);
+                    if(piece == null)
+                    {
+                        System.out.println("No piece at " + pos);
+                        continue;
+                    }
+                    if(piece.getColor() != game.getUser().getColor())
+                    {
+                        System.out.println("That piece is not yours");
+                        continue;
+                    }
+
+                    System.out.println("Possible moves from " + pos + ":");
+                    for(Position to : piece.getPossibleMoves(game.getBoard()))
+                    {
+                        try
+                        {
+                            if(game.getBoard().isValidMove(pos, to))
+                            {
+                                System.out.print(to + " ");
+                            }
+                        }
+                        catch(InvalidMoveException ignored)
+                        {
+
+                        }
+                    }
+                    System.out.println();
+                    continue;
                 }
 
                 if (!input.contains("-"))
@@ -509,6 +576,9 @@ public class Main {
                         System.out.println("Equality. Computer quits");
                         game.resign(game.getOpponent());
                         syncUserPointsFromGame(game);
+                        // scoate jocul terminat din lista de active + din games map
+                        currentUser.removeGame(game);
+                        games.remove(game.getId());
                         break;
                     }
                     game.switchPlayer();
@@ -528,9 +598,20 @@ public class Main {
 
                     if (computerMove == null)
                     {
-                        System.out.println("Computer cannot make a move. CheckMate!");
-                        game.endByCheckmate(game.getOpponent());
+                        if (game.getBoard().esteKingInCheck(current.getColor()))
+                        {
+                            System.out.println("Computer is checkmated!");
+                            game.endByCheckmate(opponent);
+                        }
+                        else
+                        {
+                            System.out.println("Computer cannot make a move. Computer resigns.");
+                            game.resign(current);
+                        }
                         syncUserPointsFromGame(game);
+                        // scoate jocul terminat din lista de active + din games map
+                        currentUser.removeGame(game);
+                        games.remove(game.getId());
                         break;
                     }
 
@@ -546,6 +627,9 @@ public class Main {
                         System.out.println("Equality. Computer quits");
                         game.resign(current);
                         syncUserPointsFromGame(game);
+                        // scoate jocul terminat din lista de active + din games map
+                        currentUser.removeGame(game);
+                        games.remove(game.getId());
                         break;
                     }
                     game.switchPlayer();
