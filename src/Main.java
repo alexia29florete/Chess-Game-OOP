@@ -12,13 +12,23 @@ public class Main {
     private User currentUser;       // logged-in user
     private Scanner scanner;
 
-    public Main()
+    private static Main instance = null;
+
+    private Main()
     {
         accounts = new ArrayList<>();
         games = new HashMap<>();
         scanner = new Scanner(System.in);
     }
 
+    public static Main getInstance()
+    {
+        if(instance == null)
+        {
+            instance = new Main();
+        }
+        return instance;
+    }
     // read data from JSON
     public void read()
     {
@@ -695,7 +705,7 @@ public class Main {
 
     public static void main(String[] args)
     {
-        Main app = new Main();
+        Main app = Main.getInstance();
         app.read();
         app.run();
     }

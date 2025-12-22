@@ -10,47 +10,47 @@ public class Board
 
     public void initialize()
     {
-        Piece whiteKing = new King(Colors.WHITE, new Position('E', 1));
+        Piece whiteKing = PieceFactory.createPiece('K', Colors.WHITE, new Position('E', 1));
         piecePosition.add(new ChessPair<>(new Position('E', 1), whiteKing));
-        Piece blackKing = new King(Colors.BLACK, new Position('E', 8));
+        Piece blackKing = PieceFactory.createPiece('K', Colors.BLACK, new Position('E', 8));
         piecePosition.add(new ChessPair<>(new Position('E', 8), blackKing));
 
-        Piece whiteQueen = new Queen(Colors.WHITE, new Position('D', 1));
+        Piece whiteQueen = PieceFactory.createPiece('Q', Colors.WHITE, new Position('D', 1));
         piecePosition.add(new ChessPair<>(new Position('D', 1), whiteQueen));
-        Piece blackQueen = new Queen(Colors.BLACK, new Position('D', 8));
+        Piece blackQueen = PieceFactory.createPiece('Q', Colors.BLACK, new Position('D', 8));
         piecePosition.add(new ChessPair<>(new Position('D', 8), blackQueen));
 
-        Piece whiteRook1 = new Rook(Colors.WHITE, new Position('A', 1));
+        Piece whiteRook1 = PieceFactory.createPiece('R', Colors.WHITE, new Position('A', 1));
         piecePosition.add(new ChessPair<>(new Position('A', 1), whiteRook1));
-        Piece whiteRook2 = new Rook(Colors.WHITE, new Position('H', 1));
+        Piece whiteRook2 = PieceFactory.createPiece('R', Colors.WHITE, new Position('H', 1));
         piecePosition.add(new ChessPair<>(new Position('H', 1), whiteRook2));
-        Piece blackRook1 = new Rook(Colors.BLACK, new Position('A', 8));
+        Piece blackRook1 = PieceFactory.createPiece('R', Colors.BLACK, new Position('A', 8));
         piecePosition.add(new ChessPair<>(new Position('A', 8), blackRook1));
-        Piece blackRook2 = new Rook(Colors.BLACK, new Position('H', 8));
+        Piece blackRook2 = PieceFactory.createPiece('R', Colors.BLACK, new Position('H', 8));
         piecePosition.add(new ChessPair<>(new Position('H', 8), blackRook2));
 
-        Piece whiteKnight1 = new Knight(Colors.WHITE, new Position('B', 1));
+        Piece whiteKnight1 = PieceFactory.createPiece('N', Colors.WHITE, new Position('B', 1));
         piecePosition.add(new ChessPair<>(new Position('B', 1), whiteKnight1));
-        Piece whiteKnight2 = new Knight(Colors.WHITE, new Position('G', 1));
+        Piece whiteKnight2 = PieceFactory.createPiece('N', Colors.WHITE, new Position('G', 1));
         piecePosition.add(new ChessPair<>(new Position('G', 1), whiteKnight2));
-        Piece blackKnight1 = new Knight(Colors.BLACK, new Position('B', 8));
+        Piece blackKnight1 = PieceFactory.createPiece('N', Colors.BLACK, new Position('B', 8));
         piecePosition.add(new ChessPair<>(new Position('B', 8), blackKnight1));
-        Piece blackKnight2 = new Knight(Colors.BLACK, new Position('G', 8));
+        Piece blackKnight2 = PieceFactory.createPiece('N', Colors.BLACK, new Position('G', 8));
         piecePosition.add(new ChessPair<>(new Position('G', 8), blackKnight2));
 
-        Piece whiteBishop1 = new Bishop(Colors.WHITE, new Position('C', 1));
+        Piece whiteBishop1 = PieceFactory.createPiece('B', Colors.WHITE, new Position('C', 1));
         piecePosition.add(new ChessPair<>(new Position('C', 1), whiteBishop1));
-        Piece whiteBishop2 = new Bishop(Colors.WHITE, new Position('F', 1));
+        Piece whiteBishop2 = PieceFactory.createPiece('B', Colors.WHITE, new Position('F', 1));
         piecePosition.add(new ChessPair<>(new Position('F', 1), whiteBishop2));
-        Piece blackBishop1 = new Bishop(Colors.BLACK, new Position('C', 8));
+        Piece blackBishop1 = PieceFactory.createPiece('B', Colors.BLACK, new Position('C', 8));
         piecePosition.add(new ChessPair<>(new Position('C', 8), blackBishop1));
-        Piece blackBishop2 = new Bishop(Colors.BLACK, new Position('F', 8));
+        Piece blackBishop2 = PieceFactory.createPiece('B', Colors.BLACK, new Position('F', 8));
         piecePosition.add(new ChessPair<>(new Position('F', 8), blackBishop2));
 
         for(char i = 'A'; i <= 'H'; i++)
         {
-            piecePosition.add(new ChessPair<>(new Position(i, 2), new Pawn(Colors.WHITE, new Position(i, 2))));
-            piecePosition.add(new ChessPair<>(new Position(i, 7), new Pawn(Colors.BLACK, new Position(i, 7))));
+            piecePosition.add(new ChessPair<>(new Position(i, 2), PieceFactory.createPiece('P', Colors.WHITE, new Position(i, 2))));
+            piecePosition.add(new ChessPair<>(new Position(i, 7), PieceFactory.createPiece('P', Colors.BLACK, new Position(i, 7))));
         }
     }
 
@@ -60,13 +60,13 @@ public class Board
         switch (choice)
         {
             case 'Q':
-                return new Queen(promotionColor, to);
+                return PieceFactory.createPiece('Q', promotionColor, to);
             case 'R':
-                return new Rook(promotionColor, to);
+                return PieceFactory.createPiece('R', promotionColor, to);
             case 'B':
-                return new Bishop(promotionColor, to);
+                return PieceFactory.createPiece('B', promotionColor, to);
             case 'N':
-                return new Knight(promotionColor, to);
+                return PieceFactory.createPiece('N', promotionColor, to);
             default:
                 throw new InvalidCommandException("Not a valid option: " + choice + ". It should be Q, R, B or N.");
         }

@@ -152,22 +152,22 @@ public final class JsonReaderUtil {
                             char pieceType = type.charAt(0);
                             switch (pieceType) {
                                 case 'K':
-                                    piece = new King(color, position);
+                                    piece = PieceFactory.createPiece('K', color, position);
                                     break;
                                 case 'Q':
-                                    piece = new Queen(color, position);
+                                    piece = PieceFactory.createPiece('Q', color, position);
                                     break;
                                 case 'R':
-                                    piece = new Rook(color, position);
+                                    piece = PieceFactory.createPiece('R', color, position);
                                     break;
                                 case 'B':
-                                    piece = new Bishop(color, position);
+                                    piece = PieceFactory.createPiece('B', color, position);
                                     break;
                                 case 'N':
-                                    piece = new Knight(color, position);
+                                    piece = PieceFactory.createPiece('N', color, position);
                                     break;
                                 case 'P':
-                                    piece = new Pawn(color, position);
+                                    piece = PieceFactory.createPiece('P', color, position);
                                     break;
                             }
                         }
