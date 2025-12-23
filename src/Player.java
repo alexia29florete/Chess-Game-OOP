@@ -9,6 +9,8 @@ public class Player
     private TreeSet<ChessPair<Position, Piece>> pieseDisponibileOwned;
     private int puncteAcumulate;
 
+    private final CaptureScoreStrategy captureScoreStrategy;
+
     public Player(String name, String email, Colors culoarePiese)
     {
         this.name = name;
@@ -16,6 +18,7 @@ public class Player
         this.culoarePiese = culoarePiese;
         pieseCapturate = new ArrayList<>();
         pieseDisponibileOwned = new TreeSet<>();
+        this.captureScoreStrategy = new CaptureScore();
         puncteAcumulate = 0;
     }
 
@@ -25,6 +28,7 @@ public class Player
         this.culoarePiese = culoarePiese;
         pieseCapturate = new ArrayList<>();
         pieseDisponibileOwned = new TreeSet<>();
+        this.captureScoreStrategy = new CaptureScore();
         puncteAcumulate = 0;
     }
 
@@ -41,6 +45,7 @@ public class Player
         this.email = email;
         pieseCapturate = new ArrayList<>();
         pieseDisponibileOwned = new TreeSet<>();
+        this.captureScoreStrategy = new CaptureScore();
         puncteAcumulate = 0;
     }
 
@@ -56,33 +61,6 @@ public class Player
         }
     }
 
-    public int getPieceValue(Piece capturedPiece)
-    {
-        if(capturedPiece.type() == 'Q')
-        {
-            return 90;
-        }
-        else if(capturedPiece.type() == 'R')
-        {
-            return 50;
-        }
-        else if(capturedPiece.type() == 'B')
-        {
-            return 30;
-        }
-        else if(capturedPiece.type() == 'N')
-        {
-            return 30;
-        }
-        else if(capturedPiece.type() == 'P')
-        {
-            return 10;
-        }
-        else
-        {
-            return 0;
-        }
-    }
 
     public void updateOwnPieces(Board board)
     {
@@ -135,7 +113,7 @@ public class Player
         if(capturedPiece != null)
         {
             pieseCapturate.add(capturedPiece);
-            puncteAcumulate += getPieceValue(capturedPiece);
+            puncteAcumulate += captureScoreStrategy.pointsForCapturedPieces(capturedPiece);
         }
 
         updateOwnPieces(board);

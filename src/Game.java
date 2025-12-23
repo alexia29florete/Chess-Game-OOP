@@ -10,6 +10,7 @@ public class Game
     private Player user;
     private Player computer;
 
+    private final List<GameObserver> observers = new ArrayList<>();
 
     public Game()
     {
@@ -221,6 +222,8 @@ public class Game
             return;
         }
         idPlayerCurent = 1 - idPlayerCurent;
+
+        notifyPlayerSwitch(getPlayer());
     }
 
     public boolean checkForCheckMate()
@@ -267,15 +270,20 @@ public class Game
         Move mutare = new Move(p.getColor(), from, to, capturedPiece);
         mutari.add(mutare);
 
+        notifyMoveMade(mutare);
+        if (capturedPiece != null)
+        {
+            notifyPieceCaptured(capturedPiece);
+        }
     }
 
-    public void handleGameEnd(Player winner, Player loser, int points, String victoryCondition)
+    public void handleGameEnd(Player winner, Player loser, EndGameScoreStrategy strategy)
     {
-        winner.addFinalPoints(points);
-        loser.addFinalPoints(-points);
+        winner.addFinalPoints(strategy.endGamePoints());
+        loser.addFinalPoints(-strategy.endGamePoints());
 
         System.out.println("\n=============================================");
-        System.out.println("Game ended: " + victoryCondition);
+        System.out.println("Game ended: " + strategy.getMessage());
         System.out.println("Winner is " + winner.getName());
         System.out.println("Final score for " + winner.getName() + " is " + winner.getPoints() + " points");
         System.out.println("Final score for " + loser.getName() + " is " + loser.getPoints() + " points");
@@ -286,11 +294,11 @@ public class Game
     {
         if(winner == user)
         {
-            handleGameEnd(user, computer, 300, "Checkmate");
+            handleGameEnd(user, computer, new CheckmateScoreStrategy());
         }
         else
         {
-            handleGameEnd(computer, user, 300, "Checkmate");
+            handleGameEnd(computer, user, new CheckmateScoreStrategy());
         }
     }
 
@@ -298,12 +306,17 @@ public class Game
     {
         if(jucatorRenunta == user)
         {
-            handleGameEnd(computer, user, 150, "Resigned");
+            handleGameEnd(computer, user, new ResignScoreStrategy());
         }
         else
         {
-            handleGameEnd(user, computer, 150, "Resigned");
+            handleGameEnd(user, computer, new ResignScoreStrategy());
         }
+    }
+
+    public void endByEquality()
+    {
+        handleGameEnd(user, computer, new EqualityScoreStrategy());
     }
 
     public boolean equality()
@@ -340,6 +353,44 @@ public class Game
             return true;
         }
         return false;
+    }
+
+    //aduag metode pentru a dat cumva "subscribe"\"unsubscribe" si pentru a notifica "abonatii" (observers)
+    public void addObserver(GameObserver observer)
+    {
+        if(observer != null)
+        {
+            observers.add(observer);
+        }
+    }
+
+    public void removeObserver(GameObserver observer)
+    {
+        observers.remove(observer);
+    }
+
+    private void notifyMoveMade(Move move)
+    {
+        for(GameObserver o : observers)
+        {
+            o.onMoveMade(move);
+        }
+    }
+
+    private void notifyPieceCaptured(Piece piece)
+    {
+        for(GameObserver o : observers)
+        {
+            o.onPieceCaptured(piece);
+        }
+    }
+
+    private void notifyPlayerSwitch(Player currentPlayer)
+    {
+        for(GameObserver o : observers)
+        {
+            o.onPlayerSwitch(currentPlayer);
+        }
     }
 }
 

@@ -584,7 +584,7 @@ public class Main {
                     if(game.equality())
                     {
                         System.out.println("Equality. Computer quits");
-                        game.resign(game.getOpponent());
+                        game.endByEquality();
                         syncUserPointsFromGame(game);
                         // scoate jocul terminat din lista de active + din games map
                         currentUser.removeGame(game);
@@ -635,7 +635,7 @@ public class Main {
                     if(game.equality())
                     {
                         System.out.println("Equality. Computer quits");
-                        game.resign(current);
+                        game.endByEquality();
                         syncUserPointsFromGame(game);
                         // scoate jocul terminat din lista de active + din games map
                         currentUser.removeGame(game);
