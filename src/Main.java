@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 public class Main {
     private List<Account> accounts; // JSON accounts
     private Map<Long, Game> games;  // existing games
@@ -203,6 +207,17 @@ public class Main {
         }
         return null;
     }
+
+    public User getCurrentUser()
+    {
+        return currentUser;
+    }
+
+    public void logout()
+    {
+        currentUser = null;
+    }
+
 
     // create new account
     public User newAccount(String email, String password)
@@ -703,10 +718,131 @@ public class Main {
         }
     }
 
+    //functii pentru UI
+    //start new game in UI
+    public Game startNewGameUI(String alias, Colors userColor)
+    {
+        long newId = 1;
+        for(Account acc : accounts)
+        {
+            //caut id-ul maxim in toate conturile
+            for(Integer id : acc.getGames())
+            {
+                if(id >= newId)
+                {
+                    newId = id + 1;
+                }
+            }
+        }
+
+//        System.out.println("Choose which color you would like to be: W (WHITE) / B (BLACK): ");
+//        String colorChoice = scanner.nextLine();
+        Colors computerColor;
+
+        if(userColor == Colors.WHITE)
+        {
+            computerColor = Colors.BLACK;
+        }
+        else
+        {
+            computerColor = Colors.WHITE;
+        }
+
+
+        Player userPlayer = new Player(currentUser.getEmail(), userColor);
+        Player computer = new Player("computer", computerColor);
+        Game game = new Game(newId, userPlayer, computer);
+
+        // initialize board
+        game.start();
+        //game.getBoard().initialize();
+        games.put(newId, game);
+        currentUser.addGame(game);
+
+//        // Daca computerul e alb, muta primul
+//        if (computerColor == Colors.WHITE)
+//        {
+//            game.switchPlayer();
+//        }
+
+        return game;
+    }
+
+    public Game getGameById(long gameId)
+    {
+        return games.get(gameId);
+    }
+
+    public boolean deleteGame(long gameId)
+    {
+        Game game = games.get(gameId);
+        if(game == null)
+        {
+            return false;
+        }
+
+        if(currentUser != null)
+        {
+            currentUser.removeGame(game);
+        }
+        games.remove(gameId);
+
+        return true;
+    }
+
+    public void saveGame(Game game)
+    {
+        if(game != null)
+        {
+            games.put(game.getId(), game);
+            write();
+        }
+    }
+
+    public List<Game> getAllGames()
+    {
+        return new ArrayList<>(games.values());
+    }
+
+    public List<Game> getUserGames()
+    {
+        if(currentUser == null)
+        {
+            return new ArrayList<>();
+        }
+        return currentUser.getActiveGames();
+    }
+
+    public void prepareSelectedGameForCurrentUser(Game selectedGame)
+    {
+        //verific daca utilizatorul curent face parte din jocul selectat
+        if (selectedGame == null || currentUser == null)
+        {
+            return;
+        }
+
+        //activez utilizatorul pentru joc, practic vad cine e user si cine e computer
+        for (Player p : selectedGame.getPlayers())
+        {
+            if (p.getName().equals(currentUser.getEmail()))
+            {
+                selectedGame.setUser(p);
+                return;
+            }
+        }
+    }
+
+
     public static void main(String[] args)
     {
         Main app = Main.getInstance();
         app.read();
-        app.run();
+        //app.run();
+
+        //pun codul cand este gata pe un thread corect
+        SwingUtilities.invokeLater(() -> {
+            AppFrame frame = new AppFrame(app);
+            frame.setVisible(true);
+        });
     }
 }
