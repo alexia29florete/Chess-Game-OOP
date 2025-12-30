@@ -95,14 +95,16 @@ public class MainMenuPanel extends JPanel
         app.write();
         refresh();
 
-        //appFrame.showGame(game);
+        appFrame.showGame(game);
     }
 
     public void contGame()
     {
         User u = app.getCurrentUser();
+        List<Game> active = u.getActiveGames();
+
         //daca utilizatorul nu are jocuri pe care sa le continue in cont
-        if (u.getActiveGames().isEmpty() || u.getActiveGames() == null)
+        if (active == null || active.isEmpty())
         {
             JOptionPane.showMessageDialog(this, "Sorry, there aren't any games to continue", "Continue Game", JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -202,6 +204,7 @@ public class MainMenuPanel extends JPanel
             movesModel.addElement(line);
             idx++;
         }
+
         JList<String> movesList = new JList<>(movesModel);
         JScrollPane movesScroll = new JScrollPane(movesList);
         movesScroll.setBorder(BorderFactory.createTitledBorder("Move History (" + g.getMoves().size() + " moves)"));
@@ -220,9 +223,11 @@ public class MainMenuPanel extends JPanel
 
         deleteBtn.addActionListener(e ->
         {
+            //in momentul in care apas pe butonul de a sterge un joc, sunt intrebat daca vreau sa sterg
             int ok = JOptionPane.showConfirmDialog(dialog, "Delete Game #" + g.getId() + "?", "Confirm delete", JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.YES_OPTION)
             {
+                //daca spun ca vreau sa il sterg, sterg jocul care contine id-ul selectat
                 boolean deleted = app.deleteGame(g.getId());
                 if (deleted)
                 {
@@ -239,8 +244,8 @@ public class MainMenuPanel extends JPanel
 
         continueBtn.addActionListener(e ->
         {
-            // când vei avea GamePanel: g.resume(); appFrame.showGame(g);
-            JOptionPane.showMessageDialog(dialog, "Next step: open GamePanel for Game #" + g.getId(), "Continue", JOptionPane.INFORMATION_MESSAGE);
+            dialog.dispose();
+            appFrame.showGame(g);
         });
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));

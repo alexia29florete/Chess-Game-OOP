@@ -130,7 +130,7 @@ public class Main {
             for(Player player : game.getPlayers())
             {
                 JSONObject playerObject = new JSONObject();
-                playerObject.put("email", player.getName());
+                playerObject.put("email", player.getEmail());
                 playerObject.put("color", player.getColor().toString());
                 playersArray.add(playerObject);
             }
@@ -593,7 +593,7 @@ public class Main {
                     Position fromPos = new Position(from);
                     Position toPos = new Position(to);
 
-                    current.makeMove(fromPos, toPos, game.getBoard(), game);
+                    //current.makeMove(fromPos, toPos, game.getBoard(), game);
                     game.getBoard().printBoard(game.getUser().getColor());
                     //verific daca am 3 mutari egale consecutive
                     if(game.equality())
@@ -643,7 +643,7 @@ public class Main {
                     Position from = computerMove.getFrom();
                     Position to = computerMove.getTo();
 
-                    current.makeMove(from, to, game.getBoard(), game);
+                    //current.makeMove(from, to, game.getBoard(), game);
                     System.out.println(current.getName() + " moves from " + from + " to " + to);
                     game.getBoard().printBoard(game.getUser().getColor());
                     //verific daca am 3 mutari egale consecutive
@@ -748,8 +748,12 @@ public class Main {
             computerColor = Colors.WHITE;
         }
 
-
         Player userPlayer = new Player(currentUser.getEmail(), userColor);
+        if(alias != null)
+        {
+            userPlayer = new Player(alias, currentUser.getEmail(), userColor);
+        }
+
         Player computer = new Player("computer", computerColor);
         Game game = new Game(newId, userPlayer, computer);
 
@@ -766,11 +770,6 @@ public class Main {
 //        }
 
         return game;
-    }
-
-    public Game getGameById(long gameId)
-    {
-        return games.get(gameId);
     }
 
     public boolean deleteGame(long gameId)
@@ -799,20 +798,6 @@ public class Main {
         }
     }
 
-    public List<Game> getAllGames()
-    {
-        return new ArrayList<>(games.values());
-    }
-
-    public List<Game> getUserGames()
-    {
-        if(currentUser == null)
-        {
-            return new ArrayList<>();
-        }
-        return currentUser.getActiveGames();
-    }
-
     public void prepareSelectedGameForCurrentUser(Game selectedGame)
     {
         //verific daca utilizatorul curent face parte din jocul selectat
@@ -824,12 +809,171 @@ public class Main {
         //activez utilizatorul pentru joc, practic vad cine e user si cine e computer
         for (Player p : selectedGame.getPlayers())
         {
-            if (p.getName().equals(currentUser.getEmail()))
+            if (p.getEmail().equals(currentUser.getEmail()))
             {
                 selectedGame.setUser(p);
                 return;
             }
         }
+    }
+
+    private void finishGameAndRemove(Game game)
+    {
+        if (game == null)
+        {
+            return;
+        }
+        syncUserPointsFromGame(game);
+        if (currentUser != null)
+        {
+            currentUser.removeGame(game);
+        }
+        games.remove(game.getId());
+        write();
+    }
+
+    public String userMoveUI(Game game, Position from, Position to, char promotion)
+    {
+        //daca user sau game nu sunt valide
+        if (currentUser == null || game == null)
+        {
+            return "ERR|No user/game";
+        }
+        prepareSelectedGameForCurrentUser(game);
+
+        //daca incerc sa mut cand nu e randul meu
+        if (game.getPlayer() != game.getUser())
+        {
+            return "ERR|Not your turn.";
+        }
+
+        try
+        {
+            //se face o miscare
+            game.getUser().makeMove(from, to, game.getBoard(), game, promotion);
+
+            //equality
+            if (game.equality())
+            {
+                game.endByEquality();
+                finishGameAndRemove(game);
+                return "END|Equality";
+            }
+
+            //next turn
+            game.switchPlayer();
+
+            //verific daca s-a terminat in sah-mat
+            if (game.checkForCheckMate())
+            {
+                game.endByCheckmate(game.getOpponent());
+                finishGameAndRemove(game);
+                return "END|Checkmate! Winner: " + game.getOpponent().getName();
+            }
+
+            //verific daca e sah
+            if (game.getBoard().esteKingInCheck(game.getPlayer().getColor()))
+            {
+                return "OK|Computer is in check!";
+            }
+
+            return "OK|";
+
+        }
+        catch (Exception ex)
+        {
+            return "ERR|Invalid move: " + ex.getMessage();
+        }
+    }
+
+    public String computerMoveUI(Game game)
+    {
+        //daca user sau game nu sunt valide
+        if (currentUser == null || game == null)
+        {
+            return "ERR|No user/game.";
+        }
+        prepareSelectedGameForCurrentUser(game);
+
+        //daca incerc sa mut cand nu e randul computerului
+        if (game.getPlayer() == game.getUser())
+        {
+            return "ERR|Not computer's turn.";
+        }
+
+        try
+        {
+            Player computer = game.getPlayer();
+            Move m = computer.getComputerMove(game.getBoard());
+
+            //daca miscarea nu e valida, fie nu mai am ce miscari sa fac, deci sunt in sah
+            //fie am renuntat computer
+            if (m == null)
+            {
+                Player opponent = game.getOpponent();
+                if (game.getBoard().esteKingInCheck(computer.getColor()))
+                {
+                    game.endByCheckmate(opponent);
+                    finishGameAndRemove(game);
+                    return "END|Computer is checkmated. Winner: " + opponent.getName();
+                }
+                else
+                {
+                    game.resign(computer);
+                    finishGameAndRemove(game);
+                    return "END|Computer resigns.";
+                }
+            }
+
+            //am miscare valida
+            //atunci cand pionul computerului ajunge in capatul opus, il promovez atomat cu regina
+            computer.makeMove(m.getFrom(), m.getTo(), game.getBoard(), game, 'Q');
+
+            //daca termin jocul cu egalitate
+            if (game.equality())
+            {
+                game.endByEquality();
+                finishGameAndRemove(game);
+                return "END|Draw (3-fold repetition).";
+            }
+
+            game.switchPlayer();
+
+            //verific daca s-a terminat in sah-mat
+            if (game.checkForCheckMate())
+            {
+                Player winner = game.getOpponent();
+                game.endByCheckmate(winner);
+                finishGameAndRemove(game);
+                return "END|Checkmate! Winner: " + winner.getName();
+            }
+
+            //verific daca e sah
+            if (game.getBoard().esteKingInCheck(game.getPlayer().getColor()))
+            {
+                return "OK|You are in check!";
+            }
+
+            return "OK|";
+
+        }
+        catch (Exception ex)
+        {
+            return "ERR|Computer move error: " + ex.getMessage();
+        }
+    }
+
+    public String resignUI(Game game)
+    {
+        if (currentUser == null || game == null)
+        {
+            return "ERR|No user/game.";
+        }
+        prepareSelectedGameForCurrentUser(game);
+
+        game.resign(game.getUser());
+        finishGameAndRemove(game);
+        return "END|You resigned";
     }
 
 
@@ -840,7 +984,8 @@ public class Main {
         //app.run();
 
         //pun codul cand este gata pe un thread corect
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() ->
+        {
             AppFrame frame = new AppFrame(app);
             frame.setVisible(true);
         });

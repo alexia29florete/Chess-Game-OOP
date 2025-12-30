@@ -61,6 +61,11 @@ public class Player
         }
     }
 
+    public String getEmail()
+    {
+        return email;
+    }
+
 
     public void updateOwnPieces(Board board)
     {
@@ -79,7 +84,7 @@ public class Player
         }
     }
 
-    public void makeMove(Position from, Position to, Board board, Game game) throws InvalidMoveException, InvalidCommandException {
+    public void makeMove(Position from, Position to, Board board, Game game,  char promotionChoice) throws InvalidMoveException, InvalidCommandException {
 
         Piece piesaCurenta = board.getPieceAt(from);
         if(piesaCurenta == null || piesaCurenta.getColor() != culoarePiese)
@@ -91,23 +96,21 @@ public class Player
             throw new InvalidMoveException("Mutarea nu este valida");
         }
 
-        char promotionChoice = 'Q';
-
-        if(piesaCurenta instanceof Pawn)
-        {
-            if((to.getY() == 8 && piesaCurenta.getColor() == Colors.WHITE) || (to.getY() == 1 && piesaCurenta.getColor() == Colors.BLACK))
-            {
-                //daca acest jucator este user
-                if(game.getUser() == this)
-                {
-                    //cer input
-                    Scanner scanner = new Scanner(System.in);
-                    System.out.println("Promoted pawn! Choose: Q/R/N/B");
-                    String input = scanner.nextLine().trim().toUpperCase();
-                    promotionChoice = input.charAt(0);
-                }
-            }
-        }
+//        if(piesaCurenta instanceof Pawn)
+//        {
+//            if((to.getY() == 8 && piesaCurenta.getColor() == Colors.WHITE) || (to.getY() == 1 && piesaCurenta.getColor() == Colors.BLACK))
+//            {
+//                //daca acest jucator este user
+//                if(game.getUser() == this)
+//                {
+//                    //cer input
+//                    Scanner scanner = new Scanner(System.in);
+//                    System.out.println("Promoted pawn! Choose: Q/R/N/B");
+//                    String input = scanner.nextLine().trim().toUpperCase();
+//                    promotionChoice = input.charAt(0);
+//                }
+//            }
+//        }
         Piece capturedPiece = board.movePiece(from, to, promotionChoice);
 
         if(capturedPiece != null)

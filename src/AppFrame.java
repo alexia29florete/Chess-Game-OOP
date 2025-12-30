@@ -13,10 +13,8 @@ public class AppFrame extends JFrame
     private final JPanel cutie = new JPanel(cardLayout);
     private final LoginPanel loginPanel;
     private final MainMenuPanel mainMenuPanel;
-    //private GamePanel gamePanel;
+    private GamePanel gamePanel;
     //private final EndPanel endPanel;
-//    private final ContinueGamesPanel continueGamesPanel;
-//    private final GameInfoPanel gameInfoPanel;
     public AppFrame(Main app)
     {
         this.app = app;
@@ -37,11 +35,11 @@ public class AppFrame extends JFrame
 
         loginPanel = new LoginPanel(app, this);
         mainMenuPanel = new MainMenuPanel(app, this);
-        //gamePanel = new GamePanel(app, this);
+        gamePanel = new GamePanel(app, this);
 
         cutie.add(loginPanel, "LOGIN");
         cutie.add(mainMenuPanel, "MAIN MENU");
-        //cutie.add(GamePanel, "CHESS GAME");
+        cutie.add(gamePanel, "CHESS GAME");
 
         setContentPane(cutie);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -60,5 +58,11 @@ public class AppFrame extends JFrame
     {
         mainMenuPanel.refresh();
         cardLayout.show(cutie, "MAIN MENU");
+    }
+
+    public void showGame(Game g)
+    {
+        gamePanel.setGame(g);
+        cardLayout.show(cutie, "CHESS GAME");
     }
 }

@@ -1,7 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class LoginPanel extends JPanel {
+public class LoginPanel extends JPanel
+{
     private final Main app;
     private final AppFrame appFrame;
     private final JTextField emailField = new JTextField(20);

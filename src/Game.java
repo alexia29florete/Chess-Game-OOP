@@ -184,19 +184,19 @@ public class Game
         mutari.clear();
 
         //vad ce culoare are jucatorul curent
-        if(players != null && players.size() == 2)
-        {
-            if(players.get(0).getColor() == Colors.WHITE)
-            {
-                idPlayerCurent = 0;
-            }
-            else
-            {
-                idPlayerCurent = 1;
-            }
-        }
-        System.out.println("Is " + getPlayer().getName() + "'s turn");
-        board.printBoard(user.getColor());
+//        if(players != null && players.size() == 2)
+//        {
+//            if(players.get(0).getColor() == Colors.WHITE)
+//            {
+//                idPlayerCurent = 0;
+//            }
+//            else
+//            {
+//                idPlayerCurent = 1;
+//            }
+//        }
+//        System.out.println("Is " + getPlayer().getName() + "'s turn");
+//        board.printBoard(user.getColor());
     }
 
     public void resume()
@@ -208,11 +208,11 @@ public class Game
         }
 
 //        System.out.println("Is " + getPlayer().getName() + "'s turn");
-          board.printBoard(user.getColor());
-        if(board.esteKingInCheck(getPlayer().getColor()))
-        {
-            System.out.println(getPlayer().getName() + " is in check");
-        }
+//        board.printBoard(user.getColor());
+//        if(board.esteKingInCheck(getPlayer().getColor()))
+//        {
+//            System.out.println(getPlayer().getName() + " is in check");
+//        }
     }
 
     public void switchPlayer()
