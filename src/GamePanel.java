@@ -458,7 +458,7 @@ public class GamePanel extends JPanel
             }
             if (piece.type() == 'B')
             {
-                return "\u256D";
+                return "\u265D";
             }
             if (piece.type() == 'N')
             {
@@ -640,21 +640,36 @@ public class GamePanel extends JPanel
 
     private char askPromotionChoice()
     {
-        String[] options = {"\u2655", "\u2656", "\u2657", "\u2658"};
-        int ch = JOptionPane.showOptionDialog(this, "Promote pawn to:", "Promotion", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-        if (ch == 1)
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Pawn Promotion", true);
+        dialog.setLayout(new GridLayout(1, 4, 15, 15));
+        ((JPanel) dialog.getContentPane()).setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        dialog.setSize(400, 150);
+        dialog.setLocationRelativeTo(this);
+
+        final char[] result = {'Q'};
+
+        String[] pieces = {"\u2655", "\u2656", "\u2657", "\u2658"};
+        char[] codes = {'Q', 'R', 'B', 'N'};
+
+        for (int i = 0; i < pieces.length; i++)
         {
-            return 'R';
+            JButton btn = new JButton("<html><font size='60'>" + pieces[i] + "</font></html>");
+            int index = i;
+
+            btn.addActionListener(e ->
+            {
+                result[0] = codes[index];
+                dialog.dispose();
+            });
+
+            btn.setFocusPainted(false);
+            //btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btn.setBackground(new Color(240, 240, 240));
+            dialog.add(btn);
         }
-        if (ch == 2)
-        {
-            return 'B';
-        }
-        if (ch == 3)
-        {
-            return 'N';
-        }
-        return 'Q';
+
+        dialog.setVisible(true);
+        return result[0];
     }
 
     private void doComputerMoveSoon()

@@ -24,28 +24,63 @@ public class MainMenuPanel extends JPanel
     public void setupUI()
     {
         setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        setBackground(new Color(10, 16, 26));
+        setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        JLabel title = new JLabel("Main Menu", SwingConstants.CENTER);
-        title.setFont(title.getFont().deriveFont(18f));
-        add(title, BorderLayout.NORTH);
+        //header
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
 
-        //creez sectiunea in care am informatii despre puncte si nr de jocuri
-        JPanel infoPlayer = new JPanel(new GridLayout(3, 1, 5, 5));
-        infoPlayer.add(userLabel);
-        infoPlayer.add(pointsLabel);
-        infoPlayer.add(gamesLabel);
-        add(infoPlayer, BorderLayout.CENTER);
+        JLabel mainMenuLabel = new JLabel("Main Menu");
+        mainMenuLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        mainMenuLabel.setForeground(new Color(180, 190, 205));
 
-        //creez sectiunea pentru butoane
+        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        userLabel.setForeground(new Color(235, 240, 250));
+        userLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        header.add(mainMenuLabel, BorderLayout.WEST);
+        header.add(userLabel, BorderLayout.EAST);
+
+        add(header, BorderLayout.NORTH);
+
+        JPanel center = new JPanel(new GridBagLayout());
+        center.setOpaque(false);
+        add(center, BorderLayout.CENTER);
+
+        //partea principala din centru cu info si butoane
+        JPanel card = new JPanel();
+        card.setPreferredSize(new Dimension(720, 520));
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(new Color(18, 28, 44));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(255, 255, 255, 35), 1, true),
+                BorderFactory.createEmptyBorder(26, 30, 26, 30)
+        ));
+
+        JLabel title = new JLabel("Chess Master");
+        title.setAlignmentX(Component.LEFT_ALIGNMENT);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        title.setForeground(new Color(235, 240, 250));
+
+        //creez sectiune de puncte si jocuri
+        JPanel statusPanel = new JPanel(new GridLayout(1, 2, 18, 0));
+        statusPanel.setOpaque(false);
+        statusPanel.setMaximumSize(new Dimension(660, 95));
+        statusPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JPanel pointsCard = createStatCard(pointsLabel);
+        JPanel gamesCard = createStatCard(gamesLabel);
+        pointsLabel.setFont(new Font("Segoe UI Symbol", Font.BOLD, 22));
+        gamesLabel.setFont(new Font("Segoe UI Symbol", Font.BOLD, 22));
+
+        statusPanel.add(pointsCard);
+        statusPanel.add(gamesCard);
+
+        //creez cele 3 butoane
         JButton newGame = new JButton("New Game");
-        JButton continueGame = new JButton("Visualise or Continue Game");
+        JButton continueGame = new JButton("Visualise or Continue");
         JButton logOut = new JButton("Logout");
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        buttons.add(newGame);
-        buttons.add(continueGame);
-        buttons.add(logOut);
-        add(buttons, BorderLayout.SOUTH);
 
         newGame.addActionListener(e -> startNewGame());
         continueGame.addActionListener(e -> contGame());
@@ -53,12 +88,78 @@ public class MainMenuPanel extends JPanel
             app.logout();
             appFrame.showLogin();
         });
+
+        //listare verticala a butoanelor
+        JPanel list = new JPanel();
+        list.setOpaque(false);
+        list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
+        list.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        list.add(createStyleButton(newGame, new Color(45, 185, 105)));
+        list.add(Box.createVerticalStrut(12));
+        list.add(createStyleButton(continueGame, new Color(52, 86, 140)));
+        list.add(Box.createVerticalStrut(12));
+        list.add(createStyleButton(logOut, new Color(220, 70, 70)));
+
+        card.add(title);
+        card.add(Box.createVerticalStrut(18));
+        card.add(statusPanel);
+        card.add(Box.createVerticalStrut(22));
+        card.add(list);
+
+        center.add(card);
+
     }
 
-//    public void createStyledButton(String title, String description, Color color)
-//    {
-//
-//    }
+    private JPanel createStyleButton(JButton b, Color accent)
+    {
+        JPanel row = new JPanel(new BorderLayout());
+        row.setOpaque(true);
+        row.setBackground(new Color(16, 24, 38));
+        row.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(255, 255, 255, 28), 1, true),
+                BorderFactory.createEmptyBorder(10, 12, 10, 14)
+        ));
+        row.setMaximumSize(new Dimension(520, 62));
+        row.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JPanel strip = new JPanel();
+        strip.setBackground(accent);
+        strip.setPreferredSize(new Dimension(6, 1));
+        row.add(strip, BorderLayout.WEST);
+
+        //stil buton
+        b.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        b.setForeground(new Color(235, 240, 250));
+        b.setBackground(new Color(16, 24, 38));
+        b.setBorderPainted(false);
+        b.setFocusPainted(false);
+        b.setContentAreaFilled(false);
+        b.setHorizontalAlignment(SwingConstants.LEFT);
+
+        JLabel arrow = new JLabel("\u203A");
+        arrow.setForeground(new Color(180, 190, 205));
+        arrow.setFont(new Font("Segoe UI", Font.BOLD, 22));
+
+        row.add(b, BorderLayout.CENTER);
+        row.add(arrow, BorderLayout.EAST);
+
+        return row;
+    }
+
+    private JPanel createStatCard(JLabel label)
+    {
+        JPanel p = new JPanel(new GridBagLayout());
+        p.setBackground(new Color(14, 22, 36));
+        p.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(255, 255, 255, 25), 1, true),
+                BorderFactory.createEmptyBorder(14, 16, 14, 16)
+        ));
+
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        p.add(label);
+        return p;
+    }
 
     public void startNewGame()
     {
@@ -259,18 +360,27 @@ public class MainMenuPanel extends JPanel
     }
 
 
-    public void refresh()
-    {
+    public void refresh() {
         User u = app.getCurrentUser();
-        if (u == null)
-        {
-            userLabel.setText("User: -");
-            pointsLabel.setText("Points: -");
-            gamesLabel.setText("Active games: -");
+        if (u == null) {
+            userLabel.setText("Guest");
+
+            pointsLabel.setText("<html><div style='text-align:center; color:#EBF0FA; font-size:22px;'><b>\u2605 0</b></div>"
+                    + "<div style='text-align:center; color:#B4BECD; font-size:11px;'>Total Points</div></html>");
+
+            gamesLabel.setText("<html><div style='text-align:center; color:#EBF0FA; font-size:22px;'><b>\u265F 0</b></div>"
+                    + "<div style='text-align:center; color:#B4BECD; font-size:11px;'>Active Games</div></html>");
             return;
         }
-        userLabel.setText("User: " + u.getEmail());
-        pointsLabel.setText("Points: " + u.getPoints());
-        gamesLabel.setText("Active games: " + u.getActiveGames().size());
+
+        userLabel.setText(u.getEmail());
+
+        pointsLabel.setText("<html><div style='text-align:center; color:#f8f82f; font-size:22px;'><b>\u2605 "
+                + u.getPoints()
+                + "</b></div><div style='text-align:center; color:#B4BECD; font-size:11px;'>Total Points</div></html>");
+
+        gamesLabel.setText("<html><div style='text-align:center; color:#05ad2f; font-size:22px;'><b>\u265F "
+                + u.getActiveGames().size()
+                + "</b></div><div style='text-align:center; color:#B4BECD; font-size:11px;'>Active Games</div></html>");
     }
 }

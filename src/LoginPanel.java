@@ -33,45 +33,45 @@ public class LoginPanel extends JPanel
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(220, 220, 220)),
-                BorderFactory.createEmptyBorder(40, 40, 40, 40)
+                BorderFactory.createEmptyBorder(55, 55, 55, 55)
         ));
-        card.setMaximumSize(new Dimension(450, 550));
-        card.setPreferredSize(new Dimension(450, 550));
+        card.setMaximumSize(new Dimension(600, 700));
+        card.setPreferredSize(new Dimension(600, 700));
 
         //titlu
         JLabel title = new JLabel("Welcome Back", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 28));
+        title.setFont(new Font("Arial", Font.BOLD, 34));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         card.add(title);
 
-        card.add(Box.createVerticalStrut(15));
+        card.add(Box.createVerticalStrut(20));
 
         //subtitlu
         JLabel subtitle = new JLabel("Sign in to continue your game", SwingConstants.CENTER);
-        subtitle.setFont(new Font("Arial", Font.PLAIN, 14));
+        subtitle.setFont(new Font("Arial", Font.PLAIN, 16));
         subtitle.setForeground(Color.GRAY);
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         card.add(subtitle);
 
-        card.add(Box.createVerticalStrut(40));
+        card.add(Box.createVerticalStrut(55));
 
         //formular
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.setBackground(Color.WHITE);
-        formPanel.setMaximumSize(new Dimension(350, 200));
+        formPanel.setMaximumSize(new Dimension(450, 240));
 
         // Email
         JLabel emailLabel = new JLabel("EMAIL ADDRESS");
-        emailLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        emailLabel.setFont(new Font("Arial", Font.BOLD, 16));
         emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         emailLabel.setForeground(Color.DARK_GRAY);
         formPanel.add(emailLabel);
         formPanel.add(Box.createVerticalStrut(5));
 
-        emailField.setMaximumSize(new Dimension(350, 45));
-        emailField.setPreferredSize(new Dimension(350, 45));
-        emailField.setFont(new Font("Arial", Font.PLAIN, 16));
+        emailField.setMaximumSize(new Dimension(450, 50));
+        emailField.setPreferredSize(new Dimension(450, 50));
+        emailField.setFont(new Font("Arial", Font.PLAIN, 18));
         emailField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(200, 200, 200)),
                 BorderFactory.createEmptyBorder(12, 15, 12, 15)
@@ -81,15 +81,15 @@ public class LoginPanel extends JPanel
 
         //parola
         JLabel passwordLabel = new JLabel("PASSWORD");
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        passwordLabel.setFont(new Font("Arial", Font.BOLD, 16));
         passwordLabel.setForeground(Color.DARK_GRAY);
         passwordLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         formPanel.add(passwordLabel);
         formPanel.add(Box.createVerticalStrut(5));
 
-        passwordField.setMaximumSize(new Dimension(350, 45));
-        passwordField.setPreferredSize(new Dimension(350, 45));
-        passwordField.setFont(new Font("Arial", Font.PLAIN, 16));
+        passwordField.setMaximumSize(new Dimension(450, 50));
+        passwordField.setPreferredSize(new Dimension(450, 50));
+        passwordField.setFont(new Font("Arial", Font.PLAIN, 18));
         passwordField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(200, 200, 200)),
                 BorderFactory.createEmptyBorder(12, 15, 12, 15)
@@ -97,13 +97,13 @@ public class LoginPanel extends JPanel
         formPanel.add(passwordField);
 
         card.add(formPanel);
-        card.add(Box.createVerticalStrut(35));
+        card.add(Box.createVerticalStrut(45));
 
         //buton Sign In
         JButton loginButton = createStyledButton("Sign In", true);
-        loginButton.setMaximumSize(new Dimension(350, 50));
-        loginButton.setPreferredSize(new Dimension(350, 50));
-        loginButton.setFont(new Font("Arial", Font.BOLD, 16));
+        loginButton.setMaximumSize(new Dimension(450, 55));
+        loginButton.setPreferredSize(new Dimension(450, 55));
+        loginButton.setFont(new Font("Arial", Font.BOLD, 18));
         loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         card.add(loginButton);
 
@@ -120,9 +120,9 @@ public class LoginPanel extends JPanel
 
         //buton Create Account
         JButton createButton = createStyledButton("Create New Account", false);
-        createButton.setMaximumSize(new Dimension(350, 50));
-        createButton.setPreferredSize(new Dimension(350, 50));
-        createButton.setFont(new Font("Arial", Font.BOLD, 16));
+        createButton.setMaximumSize(new Dimension(450, 55));
+        createButton.setPreferredSize(new Dimension(450, 55));
+        createButton.setFont(new Font("Arial", Font.BOLD, 18));
         createButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         card.add(createButton);
 
@@ -130,7 +130,7 @@ public class LoginPanel extends JPanel
 
         //status label
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        statusLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        statusLabel.setFont(new Font("Arial", Font.PLAIN, 15));
         card.add(statusLabel);
 
         //centrez card
@@ -147,7 +147,6 @@ public class LoginPanel extends JPanel
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 13));
         button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         if (isPrimary)
         {

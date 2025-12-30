@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 
 public class GameEndInfoPanel extends JPanel
 {
@@ -8,8 +7,8 @@ public class GameEndInfoPanel extends JPanel
     private final AppFrame appFrame;
 
     private final JLabel resultLabel = new JLabel("", SwingConstants.CENTER);
-    private final JLabel deltaLabel  = new JLabel("", SwingConstants.CENTER);
-    private final JLabel totalLabel  = new JLabel("", SwingConstants.CENTER);
+    private final JLabel scoreLabel  = new JLabel("", SwingConstants.CENTER);
+    private final JLabel messageLabel  = new JLabel("", SwingConstants.CENTER);
 
     public GameEndInfoPanel(Main app, AppFrame appFrame)
     {
@@ -20,56 +19,81 @@ public class GameEndInfoPanel extends JPanel
 
     public void setupUI()
     {
-        setLayout(new BorderLayout(12, 12));
-        setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+        setLayout(new GridBagLayout());
+        setBackground(new Color(10, 16, 26));
+        setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        JLabel title = new JLabel("Game finished", SwingConstants.CENTER);
-        title.setFont(title.getFont().deriveFont(Font.BOLD, 22f));
-        add(title, BorderLayout.NORTH);
+        JPanel card = new JPanel();
+        card.setPreferredSize(new Dimension(600, 520));
+        card.setMaximumSize(new Dimension(600, 520));
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(new Color(18, 28, 44));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(255, 255, 255, 35), 1, true),
+                BorderFactory.createEmptyBorder(28, 36, 28, 36)
+        ));
 
-        JPanel center = new JPanel();
-        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-
-        resultLabel.setFont(resultLabel.getFont().deriveFont(Font.BOLD, 18f));
-        deltaLabel.setFont(deltaLabel.getFont().deriveFont(16f));
-        totalLabel.setFont(totalLabel.getFont().deriveFont(16f));
+        JLabel title = new JLabel("GAME ENDED", SwingConstants.CENTER);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 44));
+        title.setForeground(new Color(210, 170, 70));
 
         resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        deltaLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        totalLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        resultLabel.setFont(new Font("Apple Color Emoji", Font.BOLD, 52));
+        resultLabel.setForeground(new Color(235, 240, 250));
 
-        center.add(Box.createVerticalStrut(20));
-        center.add(resultLabel);
-        center.add(Box.createVerticalStrut(14));
-        center.add(deltaLabel);
-        center.add(Box.createVerticalStrut(8));
-        center.add(totalLabel);
-        center.add(Box.createVerticalGlue());
+        scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        scoreLabel.setFont(new Font("Segoe UI", Font.BOLD, 34));
+        scoreLabel.setForeground(new Color(70, 225, 150));
 
-        add(center, BorderLayout.CENTER);
+        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        messageLabel.setForeground(new Color(180, 190, 205));
 
         JButton menuBtn = new JButton("Play Again");
-        JButton exitBtn = new JButton("Exit");
+        JButton exitBtn = new JButton("Exit Game");
+
+        styleButton(menuBtn, new Color(45, 185, 105));
+        styleButton(exitBtn, new Color(46, 58, 72));
 
         menuBtn.addActionListener(e -> appFrame.showMainMenu());
         exitBtn.addActionListener(e -> System.exit(0));
 
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        bottom.add(menuBtn);
-        bottom.add(exitBtn);
+        card.add(title);
+        card.add(Box.createVerticalStrut(22));
+        card.add(resultLabel);
+        card.add(Box.createVerticalStrut(18));
+        card.add(scoreLabel);
+        card.add(Box.createVerticalStrut(12));
+        card.add(messageLabel);
+        card.add(Box.createVerticalStrut(22));
+        card.add(menuBtn);
+        card.add(Box.createVerticalStrut(20));
+        card.add(exitBtn);
 
-        add(bottom, BorderLayout.SOUTH);
+        add(card);
+    }
 
-        // default (dacă ajungi accidental aici)
-        setResult("END|UNKNOWN|0|");
+    private void styleButton(JButton b, Color bg)
+    {
+        b.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        b.setMaximumSize(new Dimension(450, 56));
+        b.setPreferredSize(new Dimension(450, 56));
+        b.setBorder(BorderFactory.createEmptyBorder(12, 26, 12, 26));
+
+        b.setForeground(Color.WHITE);
+        b.setBackground(bg);
+        b.setFocusPainted(false);
+        b.setBorderPainted(false);
+        b.setOpaque(true);
+        b.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 
     public void setResult(String endRes)
     {
-        // Parse: END|TYPE|delta|msg
         String type = "UNKNOWN";
-        int delta = 0;
-        String msg = "";
+        int scoredPoints = 0;
+        String message = "";
 
         try
         {
@@ -80,47 +104,80 @@ public class GameEndInfoPanel extends JPanel
             }
             if (parts.length >= 3)
             {
-                delta = Integer.parseInt(parts[2]);
+                scoredPoints = Integer.parseInt(parts[2]);
             }
             if (parts.length >= 4)
             {
-                msg = parts[3];
+                message = parts[3];
             }
         }
-        catch (Exception ignored)
-        {
-            msg = endRes;
-        }
+        catch (Exception ignored) {}
 
-        int total = 0;
-        if (app != null && app.getCurrentUser() != null)
-        {
-            total = app.getCurrentUser().getPoints();
-        }
+        resultLabel.setText(getResult(type, scoredPoints) + " " + buildResultTitle(type, scoredPoints, message));
 
-        resultLabel.setText(buildResultTitle(type, delta, msg));
-        deltaLabel.setText("Points this earned game: " + (delta >= 0 ? "+" : "") + delta);
+        if(scoredPoints >= 0)
+        {
+            scoreLabel.setText("+" + scoredPoints);
+            scoreLabel.setForeground(new Color(70, 225, 150));
+
+            messageLabel.setText("Points earned this game");
+            messageLabel.setForeground(new Color(180, 190, 205));
+        }
+        else
+        {
+            scoreLabel.setText(String.valueOf(scoredPoints));
+            scoreLabel.setForeground(new Color(240, 95, 95));
+
+            messageLabel.setText("Points lost this game");
+            messageLabel.setForeground(new Color(180, 190, 205));
+        }
     }
 
-    private String buildResultTitle(String type, int delta, String msg)
+    private String getResult(String type, int scoredPoints)
     {
         if ("EQUALITY".equalsIgnoreCase(type))
         {
-            return "Egalitate";
+            return "\uD83E\uDD1D";
         }
-        if ("CHECKMATE".equalsIgnoreCase(type))
+        if ("CHECKMATE".equalsIgnoreCase(type) || "RESIGN".equalsIgnoreCase(type))
         {
-            return (delta >= 0) ? "Victory by checkmate" : "Defeated! You were checkmated by the computer";
+            if(scoredPoints >= 0)
+            {
+                return "\uD83C\uDFC6";
+            }
+            else
+            {
+                return "\uD83D\uDE1E";
+            }
         }
-        if ("RESIGN".equalsIgnoreCase(type))
+        return "";
+    }
+
+    private String buildResultTitle(String type, int scoredPoints, String message)
+    {
+        if ("EQUALITY".equals(type))
         {
-            return (delta >= 0) ? "Computer has resigned - Victory" : "You have resigned - Defeat";
+            return "DRAW";
+        }
+        if ("CHECKMATE".equals(type) || "RESIGN".equals(type))
+        {
+            if(scoredPoints >= 0)
+            {
+                return "VICTORY";
+            }
+            else
+            {
+                return "DEFEAT";
+            }
         }
 
-        if (msg != null && !msg.trim().isEmpty())
+        if(message.isEmpty())
         {
-            return msg;
+            return "GAME ENDED";
         }
-        return "Game ended";
+        else
+        {
+            return message;
+        }
     }
 }

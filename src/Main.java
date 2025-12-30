@@ -183,7 +183,7 @@ public class Main
         {
             e.printStackTrace();
         }
-        System.out.println("Current state of the user and game has been saved");
+        //System.out.println("Current state of the user and game has been saved");
     }
 
     // login
@@ -218,7 +218,6 @@ public class Main
     {
         currentUser = null;
     }
-
 
     // create new account
     public User newAccount(String email, String password)
@@ -937,7 +936,7 @@ public class Main
                     game.resign(computer);
                     int gamePoints = game.getUser().getPoints();
                     finishGameAndRemove(game);
-                    return "END|RESIGN|" + gamePoints + "Computer resigns";
+                    return "END|RESIGN|" + gamePoints + "|Computer resigns";
                 }
             }
 
