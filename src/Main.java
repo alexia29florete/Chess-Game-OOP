@@ -10,7 +10,8 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class Main {
+public class Main
+{
     private List<Account> accounts; // JSON accounts
     private Map<Long, Game> games;  // existing games
     private User currentUser;       // logged-in user
@@ -590,9 +591,6 @@ public class Main {
 
                 try
                 {
-                    Position fromPos = new Position(from);
-                    Position toPos = new Position(to);
-
                     //current.makeMove(fromPos, toPos, game.getBoard(), game);
                     game.getBoard().printBoard(game.getUser().getColor());
                     //verific daca am 3 mutari egale consecutive
@@ -856,8 +854,9 @@ public class Main {
             if (game.equality())
             {
                 game.endByEquality();
+                int gamePoints = game.getUser().getPoints();
                 finishGameAndRemove(game);
-                return "END|Equality";
+                return "END|EQUALITY|" + gamePoints + "|Equality";
             }
 
             //next turn
@@ -867,8 +866,18 @@ public class Main {
             if (game.checkForCheckMate())
             {
                 game.endByCheckmate(game.getOpponent());
+                int gamePoints = game.getUser().getPoints();
                 finishGameAndRemove(game);
-                return "END|Checkmate! Winner: " + game.getOpponent().getName();
+                String mesaj;
+                if(game.getOpponent() == game.getUser())
+                {
+                    mesaj = "Winner by checkmate!";
+                }
+                else
+                {
+                    mesaj = "Defeated!";
+                }
+                return "END|CHECKMATE|" + gamePoints + "|" + mesaj;
             }
 
             //verific daca e sah
@@ -880,9 +889,14 @@ public class Main {
             return "OK|";
 
         }
-        catch (Exception ex)
+        catch (InvalidMoveException | InvalidCommandException ex)
         {
             return "ERR|Invalid move: " + ex.getMessage();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            return "ERR|Internal error: " + ex.getClass().getSimpleName();
         }
     }
 
@@ -914,14 +928,16 @@ public class Main {
                 if (game.getBoard().esteKingInCheck(computer.getColor()))
                 {
                     game.endByCheckmate(opponent);
+                    int gamePoints = game.getUser().getPoints();
                     finishGameAndRemove(game);
-                    return "END|Computer is checkmated. Winner: " + opponent.getName();
+                    return "END|CHECKMATE|" + gamePoints + "|Victory by checkmate";
                 }
                 else
                 {
                     game.resign(computer);
+                    int gamePoints = game.getUser().getPoints();
                     finishGameAndRemove(game);
-                    return "END|Computer resigns.";
+                    return "END|RESIGN|" + gamePoints + "Computer resigns";
                 }
             }
 
@@ -933,8 +949,9 @@ public class Main {
             if (game.equality())
             {
                 game.endByEquality();
+                int gamePoints = game.getUser().getPoints();
                 finishGameAndRemove(game);
-                return "END|Draw (3-fold repetition).";
+                return "END|EQUALITY|" + gamePoints + "|Equality";
             }
 
             game.switchPlayer();
@@ -942,10 +959,19 @@ public class Main {
             //verific daca s-a terminat in sah-mat
             if (game.checkForCheckMate())
             {
-                Player winner = game.getOpponent();
-                game.endByCheckmate(winner);
+                game.endByCheckmate(game.getOpponent());
+                int gamePoints = game.getUser().getPoints();
                 finishGameAndRemove(game);
-                return "END|Checkmate! Winner: " + winner.getName();
+                String mesaj;
+                if(game.getOpponent() == game.getUser())
+                {
+                    mesaj = "Winner by checkmate!";
+                }
+                else
+                {
+                    mesaj = "Defeated!";
+                }
+                return "END|CHECKMATE|" + gamePoints + "|" + mesaj;
             }
 
             //verific daca e sah
@@ -957,9 +983,14 @@ public class Main {
             return "OK|";
 
         }
+        catch (InvalidMoveException | InvalidCommandException ex)
+        {
+            return "ERR|Invalid comptuer move: " + ex.getMessage();
+        }
         catch (Exception ex)
         {
-            return "ERR|Computer move error: " + ex.getMessage();
+            ex.printStackTrace();
+            return "ERR|Internal error: " + ex.getClass().getSimpleName();
         }
     }
 
@@ -972,10 +1003,10 @@ public class Main {
         prepareSelectedGameForCurrentUser(game);
 
         game.resign(game.getUser());
+        int gamePoints = game.getUser().getPoints();
         finishGameAndRemove(game);
-        return "END|You resigned";
+        return "END|RESIGN|" + gamePoints + "|You resigned";
     }
-
 
     public static void main(String[] args)
     {

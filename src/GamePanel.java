@@ -42,6 +42,9 @@ public class GamePanel extends JPanel
 
         //creez partea de sus cu mesaje
         JPanel top = new JPanel(new GridLayout(1, 3, 10, 0));
+        playersTurnLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        scoreLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        messageLabel.setFont(new Font("Arial", Font.BOLD, 16));
         top.add(playersTurnLabel);
         top.add(messageLabel);
         top.add(scoreLabel);
@@ -58,11 +61,11 @@ public class GamePanel extends JPanel
                 JButton b = new JButton();
                 b.setContentAreaFilled(true);
                 b.setMargin(new Insets(0,0,0,0));
-                b.setFont(new Font("SansSerif", Font.BOLD, 18));
+                b.setFont(new Font("SansSerif", Font.BOLD, 24));
                 b.setFocusPainted(false);
                 b.setOpaque(true);
                 b.setBorderPainted(true);
-                b.setPreferredSize(new Dimension(60, 60));
+                b.setPreferredSize(new Dimension(70, 70));
 
                 int rr = i, cc = j;
                 b.addActionListener(e -> onSquareClicked(rr, cc));
@@ -75,23 +78,46 @@ public class GamePanel extends JPanel
 
         //in stanga o sa fie move history
         historyMoves.setEditable(false); //nu vreau ca utilizatorul sa il poata edita
+//        historyMoves.setFont(new Font("Monospaced", Font.PLAIN, 14));
+//        historyMoves.setMargin(new Insets(8, 8, 8, 8));
         add(wrap("Move History", new JScrollPane(historyMoves)), BorderLayout.WEST);
 
         //in dreapta o sa am capturile fiecaruia si butoane
         capturedPiecesUser.setEditable(false);
         capturedPiecesComputer.setEditable(false);
-        Font f = new Font("Segoe UI Symbol", Font.PLAIN, 18);
-        capturedPiecesUser.setFont(f);
-        capturedPiecesComputer.setFont(f);
+        capturedPiecesUser.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 28));
+        capturedPiecesComputer.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 28));
+//        capturedPiecesUser.setMargin(new Insets(10, 10, 10, 10));
+//        capturedPiecesComputer.setMargin(new Insets(10, 10, 10, 10));
 
 
         JPanel captures = new JPanel(new GridLayout(2, 1, 8, 8));
         captures.add(wrap("Your captures", new JScrollPane(capturedPiecesUser)));
-        captures.add(wrap("Computer captures", new JScrollPane(capturedPiecesComputer)));
+        captures.add(wrap("Computer's captures", new JScrollPane(capturedPiecesComputer)));
 
         JButton resignBtn = new JButton("Resign");
+        resignBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        resignBtn.setBackground(new Color(220, 53, 69));
+        resignBtn.setForeground(Color.WHITE);
+        resignBtn.setFocusPainted(false);
+        resignBtn.setBorderPainted(false);
+        resignBtn.setOpaque(true);
+
         JButton saveExitBtn = new JButton("Save & Exit");
+        saveExitBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        saveExitBtn.setBackground(new Color(255, 193, 7));
+        saveExitBtn.setForeground(Color.WHITE);
+        saveExitBtn.setFocusPainted(false);
+        saveExitBtn.setBorderPainted(false);
+        saveExitBtn.setOpaque(true);
+
         JButton backBtn = new JButton("Back to Menu");
+        backBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        backBtn.setBackground(new Color(108, 117, 125));
+        backBtn.setForeground(Color.WHITE);
+        backBtn.setFocusPainted(false);
+        backBtn.setBorderPainted(false);
+        backBtn.setOpaque(true);
 
         resignBtn.addActionListener(e -> doResign());
         saveExitBtn.addActionListener(e -> doSaveAndExit());
@@ -114,6 +140,7 @@ public class GamePanel extends JPanel
         JPanel p = new JPanel(new BorderLayout());
         JLabel t = new JLabel(title);
         t.setFont(t.getFont().deriveFont(Font.BOLD));
+        t.setFont(new Font("Arial", Font.BOLD, 16));
         p.add(t, BorderLayout.NORTH);
         p.add(comp, BorderLayout.CENTER);
         return p;
@@ -692,9 +719,10 @@ public class GamePanel extends JPanel
         if (res.startsWith("END|"))
         {
             // jocul a fost scos/salvat
-            JOptionPane.showMessageDialog(this, msg);
+            //JOptionPane.showMessageDialog(this, msg);
             game = null;
-            appFrame.showMainMenu();
+            appFrame.showGameEnd(res);
+            //appFrame.showMainMenu();
         }
     }
 

@@ -279,6 +279,10 @@ public class Game
 
     public void handleGameEnd(Player winner, Player loser, EndGameScoreStrategy strategy)
     {
+        if (winner == null || loser == null || strategy == null)
+        {
+            throw new IllegalStateException("Game end called with null winner/loser/strategy");
+        }
         winner.addFinalPoints(strategy.endGamePoints());
         loser.addFinalPoints(-strategy.endGamePoints());
 
@@ -292,31 +296,45 @@ public class Game
 
     public void endByCheckmate(Player winner)
     {
-        if(winner == user)
+        if (players == null || players.size() != 2 || winner == null)
         {
-            handleGameEnd(user, computer, new CheckmateScoreStrategy());
+            return;
+        }
+
+        if(winner == players.get(0))
+        {
+            handleGameEnd(players.get(0), players.get(1), new CheckmateScoreStrategy());
         }
         else
         {
-            handleGameEnd(computer, user, new CheckmateScoreStrategy());
+            handleGameEnd(players.get(1), players.get(0), new CheckmateScoreStrategy());
         }
     }
 
-    public void resign(Player jucatorRenunta)
+    public void resign(Player resigning)
     {
-        if(jucatorRenunta == user)
+        if (players == null || players.size() != 2 || resigning == null)
         {
-            handleGameEnd(computer, user, new ResignScoreStrategy());
+            return;
+        }
+
+        if(resigning == players.get(0))
+        {
+            handleGameEnd(players.get(1), players.get(0), new ResignScoreStrategy());
         }
         else
         {
-            handleGameEnd(user, computer, new ResignScoreStrategy());
+            handleGameEnd(players.get(0), players.get(1), new ResignScoreStrategy());
         }
     }
 
     public void endByEquality()
     {
-        handleGameEnd(user, computer, new EqualityScoreStrategy());
+        if (players == null || players.size() != 2)
+        {
+            return;
+        }
+        handleGameEnd(players.get(0), players.get(1), new EqualityScoreStrategy());
     }
 
     public boolean equality()
