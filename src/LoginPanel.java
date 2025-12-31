@@ -47,7 +47,7 @@ public class LoginPanel extends JPanel
         card.add(Box.createVerticalStrut(20));
 
         //subtitlu
-        JLabel subtitle = new JLabel("Sign in to continue your game", SwingConstants.CENTER);
+        JLabel subtitle = new JLabel("Sign in to continue becoming a chess master", SwingConstants.CENTER);
         subtitle.setFont(new Font("Arial", Font.PLAIN, 16));
         subtitle.setForeground(Color.GRAY);
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);

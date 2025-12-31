@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.*;
 import javax.swing.*;
 import java.awt.*;
@@ -14,65 +15,85 @@ public class MainMenuPanel extends JPanel
     private final JLabel pointsLabel = new JLabel();
     private final JLabel gamesLabel = new JLabel();
 
+    private final JLabel bgLabel;
+
     public MainMenuPanel(Main app, AppFrame appFrame)
     {
         this.app = app;
         this.appFrame = appFrame;
+        File f = new File("../img/mainPageBackground.png");
+        if (f.exists())
+        {
+            ImageIcon bg = new ImageIcon(f.getAbsolutePath());
+            bgLabel = new JLabel(bg);
+        }
+        else
+        {
+            bgLabel = new JLabel();
+            setBackground(new Color(25, 35, 50));
+        }
+
+        bgLabel.setLayout(new BorderLayout());
+        this.add(bgLabel, BorderLayout.CENTER);
+
         setupUI();
     }
 
     public void setupUI()
     {
-        setLayout(new BorderLayout(10, 10));
-        setBackground(new Color(10, 16, 26));
-        setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        //setLayout(new BorderLayout(10, 10));
+        //setBackground(new Color(25, 35, 50));
+        //setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        JPanel content = new JPanel(new BorderLayout(10, 10));
+        content.setOpaque(false);
+        content.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         //header
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
 
         JLabel mainMenuLabel = new JLabel("Main Menu");
-        mainMenuLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        mainMenuLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         mainMenuLabel.setForeground(new Color(180, 190, 205));
 
-        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         userLabel.setForeground(new Color(235, 240, 250));
         userLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
         header.add(mainMenuLabel, BorderLayout.WEST);
         header.add(userLabel, BorderLayout.EAST);
 
-        add(header, BorderLayout.NORTH);
+        content.add(header, BorderLayout.NORTH);
 
         JPanel center = new JPanel(new GridBagLayout());
         center.setOpaque(false);
-        add(center, BorderLayout.CENTER);
+        content.add(center, BorderLayout.CENTER);
 
         //partea principala din centru cu info si butoane
         JPanel card = new JPanel();
-        card.setPreferredSize(new Dimension(720, 520));
+        card.setPreferredSize(new Dimension(800, 600));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBackground(new Color(18, 28, 44));
+        card.setBackground(new Color(35, 45, 65));
         card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(255, 255, 255, 35), 1, true),
+                BorderFactory.createLineBorder(new Color(45, 55, 75), 2, true),
                 BorderFactory.createEmptyBorder(26, 30, 26, 30)
         ));
 
         JLabel title = new JLabel("Chess Master");
-        title.setAlignmentX(Component.LEFT_ALIGNMENT);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setFont(new Font("Segoe UI", Font.BOLD, 26));
         title.setForeground(new Color(235, 240, 250));
 
         //creez sectiune de puncte si jocuri
-        JPanel statusPanel = new JPanel(new GridLayout(1, 2, 18, 0));
+        JPanel statusPanel = new JPanel(new GridLayout(1, 2, 25, 0));
         statusPanel.setOpaque(false);
-        statusPanel.setMaximumSize(new Dimension(660, 95));
+        statusPanel.setMaximumSize(new Dimension(700, 140));
         statusPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel pointsCard = createStatCard(pointsLabel);
         JPanel gamesCard = createStatCard(gamesLabel);
-        pointsLabel.setFont(new Font("Segoe UI Symbol", Font.BOLD, 22));
-        gamesLabel.setFont(new Font("Segoe UI Symbol", Font.BOLD, 22));
+        pointsLabel.setFont(new Font("Segoe UI Symbol", Font.BOLD, 32));
+        gamesLabel.setFont(new Font("Segoe UI Symbol", Font.BOLD, 32));
 
         statusPanel.add(pointsCard);
         statusPanel.add(gamesCard);
@@ -108,28 +129,29 @@ public class MainMenuPanel extends JPanel
         card.add(list);
 
         center.add(card);
-
+        content.add(center, BorderLayout.CENTER);
+        bgLabel.add(content, BorderLayout.CENTER);
     }
 
-    private JPanel createStyleButton(JButton b, Color accent)
+    private JPanel createStyleButton(JButton b, Color colorStrip)
     {
         JPanel row = new JPanel(new BorderLayout());
         row.setOpaque(true);
         row.setBackground(new Color(16, 24, 38));
         row.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(255, 255, 255, 28), 1, true),
-                BorderFactory.createEmptyBorder(10, 12, 10, 14)
+                BorderFactory.createLineBorder(new Color(255, 255, 255, 40), 2, true),
+                BorderFactory.createEmptyBorder(16, 20, 16, 20)
         ));
-        row.setMaximumSize(new Dimension(520, 62));
+        row.setMaximumSize(new Dimension(600, 75));
         row.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel strip = new JPanel();
-        strip.setBackground(accent);
-        strip.setPreferredSize(new Dimension(6, 1));
+        strip.setBackground(colorStrip);
+        strip.setPreferredSize(new Dimension(8, 1));
         row.add(strip, BorderLayout.WEST);
 
         //stil buton
-        b.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        b.setFont(new Font("Segoe UI", Font.BOLD, 18));
         b.setForeground(new Color(235, 240, 250));
         b.setBackground(new Color(16, 24, 38));
         b.setBorderPainted(false);
@@ -139,7 +161,7 @@ public class MainMenuPanel extends JPanel
 
         JLabel arrow = new JLabel("\u203A");
         arrow.setForeground(new Color(180, 190, 205));
-        arrow.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        arrow.setFont(new Font("Segoe UI", Font.BOLD, 28));
 
         row.add(b, BorderLayout.CENTER);
         row.add(arrow, BorderLayout.EAST);
@@ -152,10 +174,12 @@ public class MainMenuPanel extends JPanel
         JPanel p = new JPanel(new GridBagLayout());
         p.setBackground(new Color(14, 22, 36));
         p.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(255, 255, 255, 25), 1, true),
-                BorderFactory.createEmptyBorder(14, 16, 14, 16)
+                BorderFactory.createLineBorder(new Color(255, 255, 255, 40), 2, true),
+                BorderFactory.createEmptyBorder(25, 25, 25, 25)
         ));
 
+        p.setPreferredSize(new Dimension(300, 120));
+        label.setVerticalAlignment(SwingConstants.CENTER);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         p.add(label);
         return p;
@@ -375,12 +399,12 @@ public class MainMenuPanel extends JPanel
 
         userLabel.setText(u.getEmail());
 
-        pointsLabel.setText("<html><div style='text-align:center; color:#f8f82f; font-size:22px;'><b>\u2605 "
+        pointsLabel.setText("<html><div style='text-align:center; color:#f8f82f; font-size:30px;'><b>\u2605 "
                 + u.getPoints()
-                + "</b></div><div style='text-align:center; color:#B4BECD; font-size:11px;'>Total Points</div></html>");
+                + "</b></div><div style='text-align:center; color:#B4BECD; font-size:14px;'>Total Points</div></html>");
 
-        gamesLabel.setText("<html><div style='text-align:center; color:#05ad2f; font-size:22px;'><b>\u265F "
+        gamesLabel.setText("<html><div style='text-align:center; color:#05ad2f; font-size:30px;'><b>\u265F "
                 + u.getActiveGames().size()
-                + "</b></div><div style='text-align:center; color:#B4BECD; font-size:11px;'>Active Games</div></html>");
+                + "</b></div><div style='text-align:center; color:#B4BECD; font-size:14px;'>Active Games</div></html>");
     }
 }

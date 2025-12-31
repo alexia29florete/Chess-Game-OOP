@@ -191,7 +191,21 @@ public final class JsonReaderUtil {
                         String playerColor = asString(mObj.get("playerColor"));
                         String from = asString(mObj.get("from"));
                         String to = asString(mObj.get("to"));
-                        moves.add(new Move(playerColor, from, to));
+                        Move mv = new Move(playerColor, from, to);
+
+                        //citesc piesele capturate
+                        JSONObject capObj = asObject(mObj.get("captured"));
+                        if(capObj != null)
+                        {
+                            String type = asString(capObj.get("type"));
+                            String colorStr = asString(capObj.get("color"));
+                            if (type != null && type.length() > 0 && colorStr != null) {
+                                Colors c = colorStr.equals("WHITE") ? Colors.WHITE : Colors.BLACK;
+                                Piece capturedPiece = PieceFactory.createPiece(type.charAt(0), c, new Position("A1"));
+                                mv.setCapturedPiece(capturedPiece);
+                            }
+                        }
+                        moves.add(mv);
                     }
                     g.setMoves(moves);
                 }

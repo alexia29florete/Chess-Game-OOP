@@ -39,20 +39,36 @@ public class GamePanel extends JPanel
     {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setBackground(new Color(25, 35, 50));
 
         //creez partea de sus cu mesaje
         JPanel top = new JPanel(new GridLayout(1, 3, 10, 0));
-        playersTurnLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        scoreLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        top.setBackground(new Color(35, 45, 65));
+        top.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(45, 55, 75), 2),
+                BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        ));
+        playersTurnLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        playersTurnLabel.setForeground(new Color(220, 225, 235));
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        scoreLabel.setForeground(new Color(255, 200, 100));
         messageLabel.setFont(new Font("Arial", Font.BOLD, 16));
         top.add(playersTurnLabel);
         top.add(messageLabel);
         top.add(scoreLabel);
         add(top, BorderLayout.NORTH);
 
+        JPanel boardWrapper = new JPanel(new BorderLayout());
+        boardWrapper.setBackground(new Color(25, 35, 50));
+        boardWrapper.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(45, 55, 75), 4),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        ));
+
         //in centru o sa fie tabla de 8x8
         JPanel boardPanel = new JPanel(new GridLayout(8, 8));
         boardPanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 2));
+        boardPanel.setBackground(new Color(25, 35, 50));
 
         for (int i = 0; i < 8; i++)
         {
@@ -74,73 +90,115 @@ public class GamePanel extends JPanel
                 boardPanel.add(b);
             }
         }
-        add(boardPanel, BorderLayout.CENTER);
+        boardWrapper.add(boardPanel, BorderLayout.CENTER);
+        add(boardWrapper, BorderLayout.CENTER);
 
         //in stanga o sa fie move history
         historyMoves.setEditable(false); //nu vreau ca utilizatorul sa il poata edita
-//        historyMoves.setFont(new Font("Monospaced", Font.PLAIN, 14));
-//        historyMoves.setMargin(new Insets(8, 8, 8, 8));
-        add(wrap("Move History", new JScrollPane(historyMoves)), BorderLayout.WEST);
+        historyMoves.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 14));
+        historyMoves.setBackground(new Color(35, 45, 65));
+        historyMoves.setForeground(new Color(220, 225, 235));
+        historyMoves.setCaretColor(new Color(220, 225, 235));
+        historyMoves.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(wrap("Move History", styledScroll(historyMoves, new Color(35, 45, 65))), BorderLayout.WEST);
 
         //in dreapta o sa am capturile fiecaruia si butoane
         capturedPiecesUser.setEditable(false);
         capturedPiecesComputer.setEditable(false);
         capturedPiecesUser.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 28));
         capturedPiecesComputer.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 28));
-//        capturedPiecesUser.setMargin(new Insets(10, 10, 10, 10));
-//        capturedPiecesComputer.setMargin(new Insets(10, 10, 10, 10));
-
+        capturedPiecesUser.setBackground(new Color(35, 45, 65));
+        capturedPiecesUser.setForeground(new Color(255, 200, 100));
+        capturedPiecesUser.setCaretColor(new Color(220, 225, 235));
+        capturedPiecesUser.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        capturedPiecesComputer.setBackground(new Color(35, 45, 65));
+        capturedPiecesComputer.setForeground(new Color(255, 200, 100));
+        capturedPiecesComputer.setCaretColor(new Color(220, 225, 235));
+        capturedPiecesComputer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel captures = new JPanel(new GridLayout(2, 1, 8, 8));
+        captures.setBackground(new Color(25, 35, 50));
         captures.add(wrap("Your captures", new JScrollPane(capturedPiecesUser)));
         captures.add(wrap("Computer's captures", new JScrollPane(capturedPiecesComputer)));
 
-        JButton resignBtn = new JButton("Resign");
-        resignBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        resignBtn.setBackground(new Color(220, 53, 69));
-        resignBtn.setForeground(Color.WHITE);
-        resignBtn.setFocusPainted(false);
-        resignBtn.setBorderPainted(false);
-        resignBtn.setOpaque(true);
+        JButton resignBtn = createStyledButton("Resign", new Color(220, 53, 69), new Color(200, 35, 51));
 
-        JButton saveExitBtn = new JButton("Save & Exit");
-        saveExitBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        saveExitBtn.setBackground(new Color(255, 193, 7));
-        saveExitBtn.setForeground(Color.WHITE);
-        saveExitBtn.setFocusPainted(false);
-        saveExitBtn.setBorderPainted(false);
-        saveExitBtn.setOpaque(true);
+        JButton saveExitBtn = createStyledButton("Save & Exit", new Color(255, 193, 7), new Color(235, 173, 0));
 
-        JButton backBtn = new JButton("Back to Menu");
-        backBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        backBtn.setBackground(new Color(108, 117, 125));
-        backBtn.setForeground(Color.WHITE);
-        backBtn.setFocusPainted(false);
-        backBtn.setBorderPainted(false);
-        backBtn.setOpaque(true);
+        JButton backBtn = createStyledButton("Back to Menu", new Color(108, 117, 125), new Color(90, 98, 104));
 
         resignBtn.addActionListener(e -> doResign());
         saveExitBtn.addActionListener(e -> doSaveAndExit());
         backBtn.addActionListener(e -> appFrame.showMainMenu());
 
         JPanel buttons = new JPanel(new GridLayout(3, 1, 8, 8));
+        buttons.setBackground(new Color(25, 35, 50));
         buttons.add(resignBtn);
         buttons.add(saveExitBtn);
         buttons.add(backBtn);
 
         JPanel right = new JPanel(new BorderLayout(10, 10));
+        right.setBackground(new Color(25, 35, 50));
         right.add(captures, BorderLayout.CENTER);
         right.add(buttons, BorderLayout.SOUTH);
 
         add(right, BorderLayout.EAST);
     }
 
+    private JButton createStyledButton(String text, Color bgColor, Color hoverColor)
+    {
+        JButton btn = new JButton(text);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btn.setBackground(bgColor);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(true);
+        btn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
+
+        // Efect hover
+        btn.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseEntered(java.awt.event.MouseEvent evt)
+            {
+                btn.setBackground(hoverColor);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt)
+            {
+                btn.setBackground(bgColor);
+            }
+        });
+
+        return btn;
+    }
+
+    private JScrollPane styledScroll(JComponent view, Color bg)
+    {
+        JScrollPane sp = new JScrollPane(view);
+
+        sp.setBackground(bg);
+        sp.getViewport().setBackground(bg);
+
+        sp.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 75), 1));
+
+        sp.getVerticalScrollBar().setBackground(bg);
+        sp.getHorizontalScrollBar().setBackground(bg);
+
+        return sp;
+    }
+
     private JPanel wrap(String title, JComponent comp)
     {
-        JPanel p = new JPanel(new BorderLayout());
+        JPanel p = new JPanel(new BorderLayout(0, 8));
+        p.setBackground(new Color(40, 40, 45));
+        p.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(70, 70, 75), 1),
+                BorderFactory.createEmptyBorder(12, 12, 12, 12)
+        ));
+
         JLabel t = new JLabel(title);
-        t.setFont(t.getFont().deriveFont(Font.BOLD));
-        t.setFont(new Font("Arial", Font.BOLD, 16));
+        t.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        t.setForeground(new Color(200, 200, 210));
         p.add(t, BorderLayout.NORTH);
         p.add(comp, BorderLayout.CENTER);
         return p;
@@ -152,10 +210,8 @@ public class GamePanel extends JPanel
         this.game = game;
         app.prepareSelectedGameForCurrentUser(this.game);
 
-        if (this.game.getBoard() == null)
-        {
-            this.game.resume();
-        }
+        this.game.resume();
+        this.game.getScoreByCapturedPieces();
 
         selectedFrom = null;
         mutariPosibile.clear();
@@ -275,6 +331,7 @@ public class GamePanel extends JPanel
         {
             casetuta.setIcon(icon);
             casetuta.setText("");
+            casetuta.setContentAreaFilled(true);
         }
     }
 
@@ -372,7 +429,7 @@ public class GamePanel extends JPanel
         //afisez daca jucatorul curent e in sah
         if (game.getBoard().esteKingInCheck(currentPlayer.getColor()))
         {
-            messageLabel.setForeground(new Color(180, 0, 0));
+            messageLabel.setForeground(new Color(255, 100, 100));
             if (currentPlayer == game.getUser())
             {
                 messageLabel.setText("You are in check!");
@@ -401,7 +458,18 @@ public class GamePanel extends JPanel
             {
                 bulinaCuloare = "\u26AB";
             }
-            sb.append(i + 1).append(". ").append(bulinaCuloare).append(": ").append(m.getFrom()).append(" -> ").append(m.getTo());
+            if(i < 10)
+            {
+                sb.append(i + 1).append(".    ").append(bulinaCuloare).append(": ").append(m.getFrom()).append(" -> ").append(m.getTo());
+            }
+            else if(i >= 10 && i < 100)
+            {
+                sb.append(i + 1).append(".   ").append(bulinaCuloare).append(": ").append(m.getFrom()).append(" -> ").append(m.getTo());
+            }
+            else
+            {
+                sb.append(i + 1).append(".  ").append(bulinaCuloare).append(": ").append(m.getFrom()).append(" -> ").append(m.getTo());
+            }
             sb.append("\n");
         }
         historyMoves.setText(sb.toString());
@@ -479,9 +547,20 @@ public class GamePanel extends JPanel
             return "-";
         }
         StringBuilder sb = new StringBuilder();
-        for (Piece p : pieces)
+        int cnt = 6;
+        for(int i = 0; i < pieces.size(); i++)
         {
-            sb.append(pieceToUnicode(p)).append(" ");
+            sb.append(pieceToUnicode(pieces.get(i)));
+            if(i < pieces.size() - 1)
+            {
+                sb.append(" ");
+            }
+
+            //dupa fiecare 6 piese, trec la un nou rand
+            if((i + 1) % cnt == 0 && i < pieces.size() - 1)
+            {
+                sb.append("\n");
+            }
         }
         return sb.toString();
     }
@@ -505,11 +584,11 @@ public class GamePanel extends JPanel
 
         if(error)
         {
-            messageLabel.setForeground(new Color(180, 0, 0));
+            messageLabel.setForeground(new Color(255, 100, 100));
         }
         else
         {
-            messageLabel.setForeground(new Color(0, 130, 0));
+            messageLabel.setForeground(new Color(100, 255, 150));
         }
     }
 

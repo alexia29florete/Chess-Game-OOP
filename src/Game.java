@@ -373,6 +373,42 @@ public class Game
         return false;
     }
 
+    public void getScoreByCapturedPieces()
+    {
+        if(players == null || players.size() != 2 || mutari == null)
+        {
+            return;
+        }
+
+        for(Player player : players)
+        {
+            player.getCapturedPieces().clear();
+            player.setPoints(0);
+        }
+
+        CaptureScore score = new CaptureScore();
+
+        for(Move move : mutari)
+        {
+            if(move.getCapturedPiece() == null)
+            {
+                continue;
+            }
+
+            Player playerThatCaptured;
+            if(players.get(0).getColor() == move.getPlayerColor())
+            {
+                playerThatCaptured = players.get(0);
+            }
+            else
+            {
+                playerThatCaptured = players.get(1);
+            }
+            playerThatCaptured.getCapturedPieces().add(move.getCapturedPiece());
+            playerThatCaptured.setPoints(playerThatCaptured.getPoints() + score.pointsForCapturedPieces(move.getCapturedPiece()));
+        }
+    }
+
     //aduag metode pentru a dat cumva "subscribe"\"unsubscribe" si pentru a notifica "abonatii" (observers)
     public void addObserver(GameObserver observer)
     {
