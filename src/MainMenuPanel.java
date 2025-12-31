@@ -56,7 +56,7 @@ public class MainMenuPanel extends JPanel
         mainMenuLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         mainMenuLabel.setForeground(new Color(180, 190, 205));
 
-        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        userLabel.setFont(new Font("Segoe UI Symbol", Font.BOLD, 20));
         userLabel.setForeground(new Color(235, 240, 250));
         userLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
@@ -397,7 +397,7 @@ public class MainMenuPanel extends JPanel
             return;
         }
 
-        userLabel.setText(u.getEmail());
+        userLabel.setText("\uD83D\uDC64 " + u.getEmail());
 
         pointsLabel.setText("<html><div style='text-align:center; color:#f8f82f; font-size:30px;'><b>\u2605 "
                 + u.getPoints()
