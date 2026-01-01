@@ -113,25 +113,11 @@ public class Game
         }
         if(colors.equals("WHITE"))
         {
-            if(players.get(0).getColor() == Colors.WHITE)
-            {
-                idPlayerCurent = 0;
-            }
-            else if(players.get(1).getColor() == Colors.WHITE)
-            {
-                idPlayerCurent = 1;
-            }
+            idPlayerCurent = 0;
         }
         else if(colors.equals("BLACK"))
         {
-            if(players.get(0).getColor() == Colors.BLACK)
-            {
-                idPlayerCurent = 0;
-            }
-            else if(players.get(1).getColor() == Colors.BLACK)
-            {
-                idPlayerCurent = 1;
-            }
+            idPlayerCurent = 1;
         }
     }
 
@@ -232,7 +218,7 @@ public class Game
         {
             p.updateOwnPieces(board);
         }
-        //daca regele jucatorului nu este in sah => return false
+        //daca regele jucatorului curent nu este in sah => return false
         if(!board.esteKingInCheck(players.get(idPlayerCurent).getColor()))
         {
             return false;
@@ -279,10 +265,6 @@ public class Game
 
     public void handleGameEnd(Player winner, Player loser, EndGameScoreStrategy strategy)
     {
-        if (winner == null || loser == null || strategy == null)
-        {
-            throw new IllegalStateException("Game end called with null winner/loser/strategy");
-        }
         winner.addFinalPoints(strategy.endGamePoints());
         loser.addFinalPoints(-strategy.endGamePoints());
 
@@ -334,7 +316,7 @@ public class Game
         {
             return;
         }
-        handleGameEnd(players.get(0), players.get(1), new EqualityScoreStrategy());
+        handleGameEnd(user, computer, new EqualityScoreStrategy());
     }
 
     public boolean equality()
@@ -353,15 +335,21 @@ public class Game
         Move m5 = mutari.get(mutari.size() - 2);
         Move m6 = mutari.get(mutari.size() - 1);
 
+        //1: A->B
+        //3: B->A
+        //5: A->B
         //verific daca piesele albe se muta intre aceleasi directii
         boolean repeats1 = false;
-        if(m1.getFrom().equals(m3.getFrom()) && m3.getFrom().equals(m5.getFrom()) && m1.getTo().equals(m3.getTo()) && m3.getTo().equals(m5.getTo()))
+        if(m1.getFrom().equals(m3.getTo()) && m1.getFrom().equals(m5.getFrom()) && m1.getTo().equals(m3.getFrom()) && m1.getTo().equals(m5.getTo()))
         {
             repeats1= true;
         }
+        //2: A->B
+        //4: B->A
+        //6: A->B
         //verifica daca piesele negre se muta intre aceleasi pozitii
         boolean repeats2 = false;
-        if(m2.getFrom().equals(m4.getFrom()) && m4.getFrom().equals(m6.getFrom()) && m2.getTo().equals(m4.getTo()) && m4.getTo().equals(m6.getTo()))
+        if(m2.getFrom().equals(m4.getTo()) && m2.getFrom().equals(m6.getFrom()) && m2.getTo().equals(m4.getFrom()) && m2.getTo().equals(m6.getTo()))
         {
             repeats2 = true;
         }
@@ -396,6 +384,7 @@ public class Game
             }
 
             Player playerThatCaptured;
+            //determin care jucator a capturat dupa culoarea piesei
             if(players.get(0).getColor() == move.getPlayerColor())
             {
                 playerThatCaptured = players.get(0);
