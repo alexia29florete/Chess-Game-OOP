@@ -1013,11 +1013,8 @@ public class Main
         app.read();
         //app.run();
 
-        //pun codul cand este gata pe un thread corect
-        SwingUtilities.invokeLater(() ->
-        {
-            AppFrame frame = new AppFrame(app);
-            frame.setVisible(true);
-        });
-    }
+        //pornesc interfata grafica
+        AppFrame frame = new AppFrame(app);
+        frame.setVisible(true);
+        }
 }

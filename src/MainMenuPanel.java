@@ -1,3 +1,5 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.*;
 import javax.swing.*;
@@ -103,11 +105,30 @@ public class MainMenuPanel extends JPanel
         JButton continueGame = new JButton("Visualise or Continue");
         JButton logOut = new JButton("Logout");
 
-        newGame.addActionListener(e -> startNewGame());
-        continueGame.addActionListener(e -> contGame());
-        logOut.addActionListener(e -> {
-            app.logout();
-            appFrame.showLogin();
+        newGame.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                startNewGame();
+            }
+        });
+        continueGame.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                contGame();
+            }
+        });
+        logOut.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                app.logout();
+                appFrame.showLogin();
+            }
         });
 
         //listare verticala a butoanelor
@@ -137,7 +158,7 @@ public class MainMenuPanel extends JPanel
     {
         JPanel row = new JPanel(new BorderLayout());
         row.setOpaque(true);
-        row.setBackground(new Color(16, 24, 38));
+        row.setBackground(colorStrip);
         row.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(255, 255, 255, 40), 2, true),
                 BorderFactory.createEmptyBorder(16, 20, 16, 20)
@@ -145,18 +166,13 @@ public class MainMenuPanel extends JPanel
         row.setMaximumSize(new Dimension(600, 75));
         row.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel strip = new JPanel();
-        strip.setBackground(colorStrip);
-        strip.setPreferredSize(new Dimension(8, 1));
-        row.add(strip, BorderLayout.WEST);
-
         //stil buton
         b.setFont(new Font("Segoe UI", Font.BOLD, 18));
         b.setForeground(new Color(235, 240, 250));
-        b.setBackground(new Color(16, 24, 38));
+        b.setBackground(colorStrip);
         b.setBorderPainted(false);
         b.setFocusPainted(false);
-        b.setContentAreaFilled(false);
+        b.setContentAreaFilled(true);
         b.setHorizontalAlignment(SwingConstants.LEFT);
 
         JLabel arrow = new JLabel("\u203A");
@@ -254,10 +270,14 @@ public class MainMenuPanel extends JPanel
         {
             JButton btn = new JButton("Game #" + g.getId());
             //daca apas pe un buton, atunci imi deschide pagina cu informatii despre joc
-            btn.addActionListener(e ->
+            btn.addActionListener(new ActionListener()
             {
-                dialog.dispose();
-                showGameInfoDialog(g);
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    dialog.dispose();
+                    showGameInfoDialog(g);
+                }
             });
             listPanel.add(btn);
         }
@@ -268,7 +288,14 @@ public class MainMenuPanel extends JPanel
 
         //am un buton de close ca sa ajung la main menu daca nu vreau sa mai vad lista de jocuri
         JButton closeBtn = new JButton("Close");
-        closeBtn.addActionListener(e -> dialog.dispose());
+        closeBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dialog.dispose();
+            }
+        });
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.add(closeBtn);
         root.add(bottom, BorderLayout.SOUTH);
@@ -344,33 +371,48 @@ public class MainMenuPanel extends JPanel
         JButton deleteBtn = new JButton("Delete");
         JButton continueBtn = new JButton("Continue");
 
-        backBtn.addActionListener(e -> dialog.dispose());
-
-        deleteBtn.addActionListener(e ->
+        backBtn.addActionListener(new ActionListener()
         {
-            //in momentul in care apas pe butonul de a sterge un joc, sunt intrebat daca vreau sa sterg
-            int ok = JOptionPane.showConfirmDialog(dialog, "Delete Game #" + g.getId() + "?", "Confirm delete", JOptionPane.YES_NO_OPTION);
-            if (ok == JOptionPane.YES_OPTION)
+            @Override
+            public void actionPerformed(ActionEvent e)
             {
-                //daca spun ca vreau sa il sterg, sterg jocul care contine id-ul selectat
-                boolean deleted = app.deleteGame(g.getId());
-                if (deleted)
+                dialog.dispose();
+            }
+        });
+
+        deleteBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                //in momentul in care apas pe butonul de a sterge un joc, sunt intrebat daca vreau sa sterg
+                int ok = JOptionPane.showConfirmDialog(dialog, "Delete Game #" + g.getId() + "?", "Confirm delete", JOptionPane.YES_NO_OPTION);
+                if (ok == JOptionPane.YES_OPTION)
                 {
-                    app.write();
-                    refresh();
-                    dialog.dispose();
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(dialog, "Could not delete the game.", "Error", JOptionPane.ERROR_MESSAGE);
+                    //daca spun ca vreau sa il sterg, sterg jocul care contine id-ul selectat
+                    boolean deleted = app.deleteGame(g.getId());
+                    if (deleted)
+                    {
+                        app.write();
+                        refresh();
+                        dialog.dispose();
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(dialog, "Could not delete the game.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });
 
-        continueBtn.addActionListener(e ->
+        continueBtn.addActionListener(new ActionListener()
         {
-            dialog.dispose();
-            appFrame.showGame(g);
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dialog.dispose();
+                appFrame.showGame(g);
+            }
         });
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -383,10 +425,11 @@ public class MainMenuPanel extends JPanel
         dialog.setVisible(true);
     }
 
-
-    public void refresh() {
+    public void refresh()
+    {
         User u = app.getCurrentUser();
-        if (u == null) {
+        if (u == null)
+        {
             userLabel.setText("Guest");
 
             pointsLabel.setText("<html><div style='text-align:center; color:#EBF0FA; font-size:22px;'><b>\u2605 0</b></div>"

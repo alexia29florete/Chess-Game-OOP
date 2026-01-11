@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class LoginPanel extends JPanel
 {
@@ -136,10 +138,31 @@ public class LoginPanel extends JPanel
         //centrez card
         add(card, gbc);
 
-        loginButton.addActionListener(e -> doLogin());
-        createButton.addActionListener(e -> doCreateAccount());
+        loginButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                doLogin();
+            }
+        });
+        createButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                doCreateAccount();
+            }
+        });
 
-        passwordField.addActionListener(e -> doLogin());
+        passwordField.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                doLogin();
+            }
+        });
     }
 
     private JButton createStyledButton(String text, boolean isPrimary)

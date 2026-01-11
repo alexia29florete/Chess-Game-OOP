@@ -4,6 +4,8 @@ import java.awt.*;
 import java.util.*;
 import java.io.File;
 import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GamePanel extends JPanel
 {
@@ -84,7 +86,14 @@ public class GamePanel extends JPanel
                 b.setPreferredSize(new Dimension(70, 70));
 
                 int rr = i, cc = j;
-                b.addActionListener(e -> onSquareClicked(rr, cc));
+                b.addActionListener(new ActionListener()
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        onSquareClicked(rr, cc);
+                    }
+                });
 
                 tabla[i][j] = b;
                 boardPanel.add(b);
@@ -127,9 +136,44 @@ public class GamePanel extends JPanel
 
         JButton backBtn = createStyledButton("Back to Menu", new Color(108, 117, 125), new Color(90, 98, 104));
 
-        resignBtn.addActionListener(e -> doResign());
-        saveExitBtn.addActionListener(e -> doSaveAndExit());
-        backBtn.addActionListener(e -> appFrame.showMainMenu());
+        resignBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                doResign();
+            }
+        });
+        saveExitBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                doSaveAndExit();
+            }
+        });
+        backBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (game == null)
+                {
+                    appFrame.showMainMenu();
+                    return;
+                }
+
+                boolean deleted = app.deleteGame(game.getId());
+                if (deleted)
+                {
+                    app.write();
+                }
+                game = null;
+                selectedFrom = null;
+                mutariPosibile.clear();
+                appFrame.showMainMenu();
+            }
+        });
 
         JPanel buttons = new JPanel(new GridLayout(3, 1, 8, 8));
         buttons.setBackground(new Color(25, 35, 50));
@@ -735,10 +779,14 @@ public class GamePanel extends JPanel
             JButton btn = new JButton("<html><font size='60'>" + pieces[i] + "</font></html>");
             int index = i;
 
-            btn.addActionListener(e ->
+            btn.addActionListener(new ActionListener()
             {
-                result[0] = codes[index];
-                dialog.dispose();
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    result[0] = codes[index];
+                    dialog.dispose();
+                }
             });
 
             btn.setFocusPainted(false);
@@ -753,9 +801,15 @@ public class GamePanel extends JPanel
 
     private void doComputerMoveSoon()
     {
-        Timer t = new Timer(500, e -> {
-            ((Timer) e.getSource()).stop();
-            doComputerMove();
+        Timer t = new Timer(500, new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Timer src = (Timer) e.getSource();
+                src.stop();
+                doComputerMove();
+            }
         });
         t.setRepeats(false);
         t.start();

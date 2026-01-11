@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GameEndInfoPanel extends JPanel
 {
@@ -56,8 +58,22 @@ public class GameEndInfoPanel extends JPanel
         styleButton(menuBtn, new Color(45, 185, 105));
         styleButton(exitBtn, new Color(46, 58, 72));
 
-        menuBtn.addActionListener(e -> appFrame.showMainMenu());
-        exitBtn.addActionListener(e -> System.exit(0));
+        menuBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                appFrame.showMainMenu();
+            }
+        });
+        exitBtn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.exit(0);
+            }
+        });
 
         card.add(title);
         card.add(Box.createVerticalStrut(22));

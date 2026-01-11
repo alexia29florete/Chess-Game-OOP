@@ -24,14 +24,14 @@ public class AppFrame extends JFrame
         setMinimumSize(new Dimension(1000, 700));
 
         //fac app.write atunci cand inchid
-        addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosing(WindowEvent e)
-            {
-                app.write();
-            }
-        });
+//        addWindowListener(new WindowAdapter()
+//        {
+//            @Override
+//            public void windowClosing(WindowEvent e)
+//            {
+//                app.write();
+//            }
+//        });
 
         loginPanel = new LoginPanel(app, this);
         mainMenuPanel = new MainMenuPanel(app, this);
