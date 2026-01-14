@@ -66,5 +66,13 @@
     "games": [
       12
     ]
+  },
+  {
+    "email": "test@test.com",
+    "password": "test",
+    "points": 0,
+    "games": [
+      100
+    ]
   }
 ]
