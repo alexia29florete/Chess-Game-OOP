@@ -496,11 +496,11 @@ public class GamePanel extends JPanel
             String bulinaCuloare;
             if(m.getPlayerColor() == Colors.WHITE)
             {
-                bulinaCuloare = "\u26AA";
+                bulinaCuloare = "\u26AB";
             }
             else
             {
-                bulinaCuloare = "\u26AB";
+                bulinaCuloare = "\u26AA";
             }
             if(i < 10)
             {
@@ -527,7 +527,7 @@ public class GamePanel extends JPanel
             return "";
         }
 
-        if(piece.getColor() == Colors.WHITE)
+        if(piece.getColor() != Colors.WHITE)
         {
             if(piece.type() == 'K')
             {
